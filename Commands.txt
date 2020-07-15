@@ -1,0 +1,9 @@
+commnads:
+java -jar SiCloneFiT.jar -m 100 -n 50 -fp 0.05 -fn 0.2 -df 1 -burnin 50 -iter 500 -printIter 20 -ipMat /home/deepank/Downloads/Prof_Hamim/Convertor_project/dataset1.txt -outDir /home/deepank/Downloads/Prof_Hamim/Convertor_project/outputs/
+
+java -jar SiFit.jar -m 100 -n 50 -fp 0.05 -fn 0.2 -r 2 -iter 10000 -df 1 -ipMat /home/deepank/Downloads/Prof_Hamim/Convertor_project/dataset1.txt
+
+./scite -i /home/deepank/Downloads/Prof_Hamim/Convertor_project/scite_dataset1.csv -n 50 -m 100 -r 1 -l 900000 -fd 0.05 -ad 0.2 -o dataset1
+
+run OnceNem.R
+
