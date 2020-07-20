@@ -1,2 +1,12 @@
 Use this file to keep log of the steps you are performing. 
 
+1. Input from user added in form of choices and paths has been added.
+2. For the conversion codes, I thought I was enough in the form of Phylo->Mut->Clonal->Phylo( 3 nistead of 6 conversions) but after seeing the metrics this might not be possible therefore all 6 conversion codes have to be written.
+
+
+
+#TO BE ADDED:-
+0. 3 more conversion codes denoting a anti cycle.
+1. command line arguments
+2. metrics comparison for trees.
+
