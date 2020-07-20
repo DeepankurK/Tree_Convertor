@@ -22,9 +22,10 @@ class Mut_to_Clonal:
             child_clus[j]=list(set(child_clus[j])-set(node_clus))
             b=[k for k in child_clus[j] if 'c' in str(k)]
             b_not=[k for k in child_clus[j] if 'c' not in str(k)]
-            if b[0]+" [label="+b[0]+']' not in str(self.dot):
-                self.dot.node(b[0],(" , ").join(i))
-            self.dot.edge(t[0],b[0])
+            if len(b)!=0:
+                if b[0]+" [label="+b[0]+']' not in str(self.dot):
+                    self.dot.node(b[0],(" , ").join(i))
+                self.dot.edge(t[0],b[0])
             temp_clus=temp_clus+b_not
         return temp_clus
     

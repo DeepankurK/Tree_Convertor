@@ -108,7 +108,7 @@ def phylo_tree():
     write(newick)
     
 def clonal_tree():
-    in_tree,matrix=input_func('c')
+    in_tree,matrix,label=input_func('c')
     ch=int(input("Select the tree for conversion:-  1 . Phylogenetc Tree and 2. Mutation Tree.\n"))
     if ch==1:
         obj=clonal.Clonal_to_Phylo(in_tree,matrix)
