@@ -71,10 +71,8 @@ def input_func(ch):
     if ch=='c':       
         dot=graph_to_dot(content)
         content,label=dot_to_newick(dot)
-    in_tree=loads(content)
     matrix_file=input("Enter the path of cell mutation matrix file.\n")
     matrix=pd.read_csv(matrix_file,header=None,sep=" ")
-    matrix=matrix.drop([0],axis=1)
     matrix=matrix.replace(2,1)
     print("Output will be stored in results folder.")
     if os.path.exists(os.getcwd()+'/results/'):
@@ -87,9 +85,8 @@ def input_func(ch):
     plt.savefig(os.getcwd()+'/results/Original_tree.png')
     
     if ch=='c':
-        return in_tree,matrix,label
-    return in_tree,matrix
-
+        return tree,matrix,label
+    return tree,matrix
 def write(content):
     file=open(os.getcwd()+'/results/newick.txt','w')
     file.write(content)
@@ -104,19 +101,19 @@ def phylo_tree():
         obj=phylo.Phlyo_to_Clonal(in_tree,matrix)
     dot=obj.convert()
     newick,_=dot_to_newick(dot)
-    dot.render(filename="Converted",directory=os.getcwd()+'/results/')
+    dot.render(filename="Tree",directory=os.getcwd()+'/results/')
     write(newick)
     
 def clonal_tree():
     in_tree,matrix,label=input_func('c')
     ch=int(input("Select the tree for conversion:-  1 . Phylogenetc Tree and 2. Mutation Tree.\n"))
     if ch==1:
-        obj=clonal.Clonal_to_Phylo(in_tree,matrix)
+        obj=clonal.Clonal_to_Phylo(in_tree,matrix,label)
     if ch==2:
-        obj=clonal.Clonal_to_Mut(in_tree,matrix)
+        obj=clonal.Clonal_to_Mut(in_tree,matrix,label)
     dot=obj.convert()
     newick,_=dot_to_newick(dot)
-    dot.render(filename="Converted",directory=os.getcwd()+'/results/')
+    dot.render(filename="Tree",directory=os.getcwd()+'/results/')
     write(newick)
     
 def muta_tree():
@@ -128,7 +125,7 @@ def muta_tree():
         obj=phylo.Mut_to_Phylo(in_tree,matrix)
     dot=obj.convert()
     newick,_=dot_to_newick(dot)
-    dot.render(filename="Converte",directory=os.getcwd()+'/results/')
+    dot.render(filename="Tree",directory=os.getcwd()+'/results/')
     write(newick)
 
 ch=int(input("Enter the tree format for input:-\n1. Phylogenetic Tree\n2. Clonal Tree\n3. Mutation Tree.\n"))
