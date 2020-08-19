@@ -1,0 +1,22 @@
+// Clonal Tree
+digraph {
+	0 [label=N]
+	1 [label="C:1"]
+	0 -> 1
+	2 [label=1]
+	0 -> 2
+	3 [label=2]
+	2 -> 3
+	4 [label="C:4"]
+	3 -> 4
+	5 [label=3]
+	3 -> 5
+	6 [label="C:2"]
+	5 -> 6
+	7 [label=6]
+	3 -> 7
+	8 [label=7]
+	7 -> 8
+	9 [label="C:3"]
+	8 -> 9
+}

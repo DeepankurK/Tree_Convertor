@@ -1,0 +1,8 @@
+// Mutation Tree
+digraph {
+	0 [label=N]
+	1 [label="sc3,sc5,sc4"]
+	0 -> 1
+	2 [label="sc2,sc1"]
+	0 -> 2
+}
