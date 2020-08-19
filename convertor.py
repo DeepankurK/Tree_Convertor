@@ -1,4 +1,3 @@
-from  newick import loads
 from Bio import Phylo
 import io
 import pandas as pd
@@ -10,14 +9,19 @@ import os
 from ete3 import Tree
 from graphviz import Digraph
 import matplotlib.pyplot as plt
-import shutil
+import sys
+import getopt
 #    cell file
  #   cell_file=input("Enter the path of file containing cell names or enter N for 1 to n to be considered.\n")
 
-#output file
-#terminal_getops
- 
-    
+path_input=""
+path_matrix=""
+path_output=""
+filename="Converted_Tree"
+typ=0
+dot=""
+content=""
+
 def graph_to_dot(content):
     c=0
     dot=Digraph()
@@ -40,7 +44,7 @@ def graph_to_dot(content):
   
 def dot_to_newick(dot):
     label={}
-    print(dot)
+    #print(dot)
     for i in str(dot).split("\n"):
         if "label=" in i:
             q=i.split('[label=')
@@ -65,20 +69,10 @@ def dot_to_newick(dot):
     #print(q)
     return q,label
 
-def input_func(ch):
-    input_file=input("Enter the path of input file.\n")
-    content=open(input_file,"r").read()
+def input_func(ch,content):
     if ch=='c':       
         dot=graph_to_dot(content)
         content,label=dot_to_newick(dot)
-    matrix_file=input("Enter the path of cell mutation matrix file.\n")
-    matrix=pd.read_csv(matrix_file,header=None,sep=" ")
-    matrix=matrix.replace(2,1)
-    print("Output will be stored in results folder.")
-    if os.path.exists(os.getcwd()+'/results/'):
-        shutil.rmtree(os.getcwd()+'/results/')
-    os.makedirs(os.getcwd()+'/results/')
-    
     handle=io.StringIO(content)
     tree=Phylo.read(handle,"newick")
     Phylo.draw(tree,do_show=False)
@@ -88,55 +82,99 @@ def input_func(ch):
         return tree,matrix,label
     return tree,matrix
 def write(content):
-    file=open(os.getcwd()+'/results/newick.txt','w')
+    file=open(path_output+'newick.txt','w')
     file.write(content)
     file.close()
     
-def phylo_tree():
+def phylo_tree(typ=0,content):
     in_tree,matrix=input_func('p')
-    ch=int(input("Select the tree for conversion:-  1 . Mutation Tree and 2. Clonal Tree.\n"))
-    if ch==1:
+    if typ==0:
+        typ=int(input("Select the tree for conversion:- \n 2 for Clonal Tree \n 3 for Mutation Tree \n"))
+    if typ==3:
         obj=phylo.Phylo_to_Mut(in_tree,matrix)
-    if ch==2:
+    if typ==2:
         obj=phylo.Phlyo_to_Clonal(in_tree,matrix)
     dot=obj.convert()
     newick,_=dot_to_newick(dot)
-    dot.render(filename="Tree",directory=os.getcwd()+'/results/')
-    write(newick)
+    return newick
     
-def clonal_tree():
+def clonal_tree(typ=0,content):
     in_tree,matrix,label=input_func('c')
-    ch=int(input("Select the tree for conversion:-  1 . Phylogenetc Tree and 2. Mutation Tree.\n"))
-    if ch==1:
+    if typ==0:
+        typ=int(input("Select the tree for conversion:- \n 1 for Phylogenetc Tree \n 3 for Mutation Tree \n"))
+    if typ==1:
         obj=clonal.Clonal_to_Phylo(in_tree,matrix,label)
-    if ch==2:
+    if typ==3:
         obj=clonal.Clonal_to_Mut(in_tree,matrix,label)
     dot=obj.convert()
     newick,_=dot_to_newick(dot)
-    dot.render(filename="Tree",directory=os.getcwd()+'/results/')
-    write(newick)
+    return newick
     
-def muta_tree():
-    in_tree,matrix=input_func('m')
-    ch=int(input("Select the tree for conversion:-  1 . Clonal Tree and 2. Phylogenetic Tree.\n"))
-    if ch==1:
+def muta_tree(typ=0,content):
+    in_tree,matrix=input_func('m',content)
+    if typ==0:
+        typ=int(input("Select the tree for conversion:- \n 1 for Phylogenetic Tree \n 2 for Clonal Tree \n"))
+    if typ==2:
         obj=mut.Mut_to_Clonal(in_tree,matrix)
-    if ch==2:
+    if typ==1:
         obj=phylo.Mut_to_Phylo(in_tree,matrix)
     dot=obj.convert()
     newick,_=dot_to_newick(dot)
-    dot.render(filename="Tree",directory=os.getcwd()+'/results/')
-    write(newick)
+    return newick
 
-ch=int(input("Enter the tree format for input:-\n1. Phylogenetic Tree\n2. Clonal Tree\n3. Mutation Tree.\n"))
-if ch==1:
-    phylo_tree()
-elif ch==2:
-    clonal_tree()
-elif ch==3:
-    muta_tree()
+
+arg=sys.argv
+if len(arg)==1:
+    ch=int(input("Enter the tree format for input:-\n1. Phylogenetic Tree\n2. Clonal Tree\n3. Mutation Tree.\n"))
+    
 else:
-    print("Wrong Choice inputted.")
-    
-    
-
+    arg=arg[1:]
+    short_options="t:i:m:o:f:r:"
+    long_options=["tree","input","matrix","output","filename","result"]
+    try:
+        arguments, values = getopt.getopt(arg, short_options, long_options)
+    except getopt.error as err:
+        print (str(err))
+        sys.exit(2)
+    for curr_arg, curr_val in zip(arguments,values):
+        if curr_arg in ("-t","--tree"):
+            ch=int(curr_val)
+        if curr_arg in ("-i","--input"):
+            path_input=curr_val
+        if curr_arg in ("-m","--matrix"):
+            path_matrix=curr_val
+        if curr_arg in ("-o","--output"):
+            path_output=curr_val
+        if curr_arg in ("-f","--filename"):
+            filename=curr_val
+        if curr_arg in ("-r","--result"):
+            typ=int(curr_val)
+            
+if path_output=="":
+    if not os.path.exists(os.getcwd()+'/results/'):
+        os.makedirs(os.getcwd()+'/results/')
+    path_output=os.getcwd()+'/results/'
+else:
+    if path_output[-1]!='/':
+        path_output+='/'
+    if not os.path.exists(path_output+'results/'):
+        os.makedirs(path_output+'/results/')
+    path_output+='results/'
+if path_input=="":
+    path_input=input("Enter the path of input file.\n")
+content=open(path_input,"r").read()
+if path_matrix=="":
+    path_matrix=input("Enter the path of cell mutation matrix file.\n")
+matrix=pd.read_csv(path_matrix,header=None,sep=" ")
+matrix=matrix.replace(2,1)
+print("Output will be stored in results folder.")
+if ch==1:
+    newick=phylo_tree(typ,content)
+elif ch==2:
+    newick=clonal_tree(typ,content)
+elif ch==3:
+    newick=muta_tree(typ,content)
+else:
+    print("Wrong Tree Choice inputted.")
+dot.render(filename=filename,directory=path_output)
+write(newick)

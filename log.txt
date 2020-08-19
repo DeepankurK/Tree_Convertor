@@ -1,8 +1,9 @@
 Use this file to keep log of the steps you are performing. 
 
-1. Input from user added in form of choices and paths has been added( command line arguments to be added)
-2. Only Clonal to Phlo os rmaining.
-3. No metrics have been implemented for distance calculation or tree comparison.
+Left steps:-
+
+1. Only Clonal to Phlo os rmaining.
+2. No metrics have been implemented for distance calculation or tree comparison.
 
 
 
