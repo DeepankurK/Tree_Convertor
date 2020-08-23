@@ -1,23 +1,26 @@
 from graphviz import Digraph
 import pandas as pd
 from collections import Counter 
+import re
 
 class Node_2:
-    def __init__(self,nodes=[],self_mut=[],br_mut=[],node_label=[]):
+    def __init__(self,top=0,nodes=[],self_mut=[],br_mut=[],node_label=[]):
         self.nodes=nodes
+        self.top=top
         self.self_mut=self_mut
         self.node_label=node_label
         
     def show(self):
         ls=[]
+        #print(self.nodes)
         for i in self.nodes:
             ls=ls+i.self_mut
-           # print(i.self_mut,"bef")
+            #print(i.self_mut,"bef")
         if ls==[]: return
-        print(self.self_mut,len(self.nodes),ls,"bef")
+        #print(self.self_mut,len(self.nodes),ls,"bef")
         ele,cnt=Counter(ls).most_common(1)[0] 
         if cnt>=2:
-            new_node=Node_2(br_mut=[],nodes=[],node_label=self.node_label)
+            new_node=Node_2(nodes=[],node_label=self.node_label)
             curr_nodes=self.nodes.copy()
             new_node.self_mut.append(ele)
             for j in curr_nodes:
@@ -25,19 +28,19 @@ class Node_2:
                     self.nodes.remove(j)
                     j.self_mut.remove(ele)
                     new_node.nodes.append(j)
-            print(self.self_mut,len(self.nodes),"now")
+            #print(self.self_mut,len(self.nodes),"now")
             self.nodes.append(new_node)
             self.show()
         else: 
-            print(self.self_mut,len(self.nodes),"done")
+            #print(self.self_mut,len(self.nodes),"done")
             for i in self.nodes:
                 i.show()    
                 
     def optimize(self,root,node):
         node.self_mut=self.node_label[root]
-        print(node,node.self_mut)
+        #print(node,node.self_mut)
         for i in root.clades:
-            node_curr=Node_2(br_mut=[],nodes=[],node_label=self.node_label)
+            node_curr=Node_2(top=i,br_mut=[],nodes=[],node_label=self.node_label)
             node.nodes.append(node_curr)
             if len(i.clades)!=0:
                 ret=self.optimize(i,node_curr)
@@ -46,17 +49,36 @@ class Node_2:
                         node.nodes.append(j)
             else:
                 node_curr.self_mut=self.node_label[i]
-                print(node_curr,node_curr.self_mut)
-        if len(node.self_mut)==1 and len(root.clades)!=0:
+                #print(node_curr,node_curr.self_mut)
+        #print(node,node.self_mut,node.nodes)
+        if len(node.self_mut)==1 and len(root.clades)!=0 and root!=self.top:
             q=node.nodes
             node.nodes=[]
             return q
-            
+
+class Node:
+    def __init__(self,top=0,nodes=[],self_mut=[],br_mut=[],node_label=[]):
+        self.nodes=nodes
+        self.top=top
+        self.self_mut=self_mut
+        self.node_label=node_label
+                
+    def optimize(self,root,node):
+        #print(root,node,node.self_mut)
+        node.self_mut=self.node_label[root]
+        for i in root.clades:
+            node_curr=Node(top=i,br_mut=[],nodes=[],node_label=self.node_label)
+            node.nodes.append(node_curr)
+            if len(i.clades[0].clades)!=0:
+                self.optimize(i,node_curr)
+            else:
+                node_curr.self_mut=self.node_label[i]
+            #print(node_curr.self_mut)
 
 
 class Clonal_to_Mut:
 
-    def __init__(self,tree,matrix,label):
+    def __init__(self,tree,matrix,label,gr,z):
         self.tree=tree
         self.matrix=matrix
         self.label=label
@@ -66,6 +88,8 @@ class Clonal_to_Mut:
         self.dot.attr('node')
         self.dot.node('0','N')
         self.node_label={}
+        self.gr=gr
+        self.z=z
         
     def get_mut(self,ls):
         temp_pd=pd.DataFrame()
@@ -73,7 +97,8 @@ class Clonal_to_Mut:
         for i in ls.split(" "):
             #print(i)
             if i!='':
-                temp_pd[i]=self.matrix.loc[:,int(i.strip())-1]
+                if self.z:temp_pd[i]=self.matrix.loc[:,int(i.strip())]
+                else:temp_pd[i]=self.matrix.loc[:,int(i.strip())-1]
         mut_list=[]
         for i in range(len(temp_pd)):
             d=1
@@ -130,7 +155,50 @@ class Clonal_to_Mut:
             else:self.node_label[node.clades[0]]=i
             if self.root==node:self.node_label[node]=node_list
             else:return node_list
+    def transverse2(self,node):
+        #print(node.name,node.confidence)
+        if len(node.clades[0].clades)==0:
+            temp=self.get_mut(self.label[re.sub('\D',"",node.name)])
+            temp.append('C:'+re.sub('\D',"",node.name))
+            return temp
+        else:
+            mut_clus=[]
+            muts=[]
+            change=[]
+            for i in node.clades:
+                mut_clus.append(self.transverse2(i))
+                muts=muts+mut_clus[-1]
+            node_list=[]
+            fr=dict(Counter(muts))
+            for x,y in fr.items():
+                if y==len(node.clades) and y!=1:
+                    node_list.append(x)
+                    change.append(x)
+            temp=mut_clus.copy()
+            for i in temp:
+                mut_clus.remove(i)
+                i=[k for k in i if k not in change]
+                mut_clus.append(i)
+                #print(i)
+            #print(node.confidence,node_list,mut_clus,"2")
+            if len(node.clades)!=1:
+                for i,z in zip(mut_clus,node.clades):
+                    self.node_label[z]=i
+            else:self.node_label[node.clades[0]]=i
+            if self.root==node:self.node_label[node]=node_list
+            else:return node_list
             
+    def create_label(self,root):
+        #print(root,root.name)
+        if len(root.clades[0].clades)==0:
+            ls=[]
+            for i in root.clades:
+                ls.append(re.sub("\D", "", i.name))
+            self.label[re.sub("\D", "", root.name)]=" ".join(ls)
+            return
+        for i in root.clades:
+            self.create_label(i)
+        
     def create_node(self,curr,st):
         self.dot.node(str(self.c),st)
         self.dot.edge(str(curr),str(self.c))
@@ -138,7 +206,7 @@ class Clonal_to_Mut:
         
     def tree_to_dot(self,root,prev2):
         j=root.self_mut
-        print("prev",j)
+        #print("prev",j)
         for i in j:
             if '-' in i and '+' not in i:
                 self.create_node(prev2,i)
@@ -159,18 +227,26 @@ class Clonal_to_Mut:
                 prev2=self.c-1
                 
         for j in root.nodes:
-            print("imp",j,j.self_mut)
+            #print("imp",j,j.self_mut)
             self.tree_to_dot(j,prev2)
            # elif len(k.nodes)==0:
             #    self.tree_to_dot(k,el_prev)
-    def convert(self):  
-        self.transverse(self.root)
-        #print(self.label)
-        #print()
-        #print(self.node_label)
-        #print()
-        root2=Node_2(nodes=[],self_mut=[],br_mut=[],node_label=self.node_label)
-        root2.optimize(self.root,root2)
-        root2.show()
+    def convert(self):
+        if not self.gr: 
+            self.label={}
+            self.create_label(self.root)
+            self.transverse2(self.root)
+            #print(self.label)
+            #print()
+            #print(self.node_label)
+            #print()
+            root2=Node(top=self.root,nodes=[],self_mut=[],node_label=self.node_label)
+            root2.optimize(self.root,root2)
+        else: 
+            self.transverse(self.root)
+            root2=Node_2(top=self.root,nodes=[],self_mut=[],node_label=self.node_label)
+            root2.optimize(self.root,root2)
+            root2.show()
+        #print(root2,root2.nodes,root2.self_mut)
         self.tree_to_dot(root2,0)
         return self.dot

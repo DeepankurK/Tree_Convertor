@@ -52,12 +52,12 @@ class Node_2:
 
             self.br_mut.append([ele])
             self.nodes.append(new_node)
-            print(self.br_mut,new_node.br_mut)
+            #print(self.br_mut,new_node.br_mut)
             #for i in self.br_mut:
              #   print(i)
             self.show()
         else: 
-            print("done2")
+            #print("done2")
             #print(self.br_mut,len(self.nodes))
             for i in self.nodes:
                 i.show()    
@@ -88,7 +88,7 @@ class Node_2:
             self.optimize(root.n2,node)
                 
 class Phylo_to_Mut:
-    def __init__(self,in_tree,matrix):
+    def __init__(self,in_tree,matrix,z):
         self.matrix=matrix
         self.tree=in_tree
         self.c=1
@@ -96,6 +96,7 @@ class Phylo_to_Mut:
         self.dot=Digraph(comment="Mutation Tree",format='png')
         self.dot.attr('node',shape='circle')
         self.dot.node('0',"N")
+        self.z=z
         
     def tree_recursion(self,a,n1,b,n2):
         a_dif = [i for i in a + b if i not in b ]
@@ -113,7 +114,8 @@ class Phylo_to_Mut:
         temp_pd=pd.DataFrame()
         #print(node_des.name,"desc")
         cell=int(re.sub('\D', '',str(node_des.name)))
-        temp_pd[cell]=self.matrix.iloc[:,cell-1]
+        if self.z:temp_pd[cell]=self.matrix.iloc[:,cell]
+        else:temp_pd[cell]=self.matrix.iloc[:,cell-1]
         mut_list=[]
         for i in range(len(temp_pd)):
             if temp_pd.loc[i,cell]==1:
@@ -169,7 +171,7 @@ class Phylo_to_Mut:
     def tree_to_dot(self,root,el_prev):
         for i,k in zip(root.br_mut,root.nodes):
             d=self.c
-            print(i,k.br_mut,len(k.nodes))
+            #print(i,k.br_mut,len(k.nodes))
             if len(i)!=0:
                 self.create_node(i[0])
                 self.create_edge(el_prev,i[0],d,len(i))
@@ -188,17 +190,21 @@ class Phylo_to_Mut:
             b_test=root.n2.b.split(" ")
             for i in a_dif:
                 if i in a_test and i not in b_test:
-                    print(i,a_dif,a_test,b_test)
+                    pass
+                    #print(i,a_dif,a_test,b_test)
                 if i in b_test and i not in a_test:
-                    print(i,a_dif,a_test,b_test)
+                    pass
+                    #print(i,a_dif,a_test,b_test)
         if len(b_dif)!=0 and b_dif!=[''] and root.n1!=None:
             a_test=root.n1.a.split(" ")
             b_test=root.n1.b.split(" ")
             for i in b_dif:
                 if i in a_test and i not in b_test:
-                    print(i,b_dif,a_test,b_test)
+                    pass
+                    #print(i,b_dif,a_test,b_test)
                 if i in b_test and i not in a_test:
-                    print(i,b_dif,a_test,b_test)
+                    pass
+                    #print(i,b_dif,a_test,b_test)
         if root.n1!=None:self.back_mut(root.n1)            
         if root.n2!=None:self.back_mut(root.n2)
         
@@ -212,8 +218,8 @@ class Phylo_to_Mut:
         return self.dot
 
 class Phylo_to_Clonal:
-    def __init__(self,in_tree,matri):
-        self.matrix=matri
+    def __init__(self,in_tree,matrix,z):
+        self.matrix=matrix
         self.tree=in_tree
         self.dot=Digraph(comment="Mutation Tree",format='png')
         self.dot.attr('node')
@@ -224,6 +230,9 @@ class Phylo_to_Clonal:
         self.allclades=[]
         self.dic_num={}
         self.c=1
+        self.cell=min(matrix.shape[1],21)
+        self.cell_root={}
+        self.z=z
         
     def dist(self):
          self.allclades=list(self.tree.find_clades(terminal=True,order='level'))
@@ -237,8 +246,10 @@ class Phylo_to_Clonal:
      
     def sil_score(self,distmat):
         max_score=0
-        for i in range(2,21):
+        for i in range(2,self.cell):
+            #print(i)
             kmedoids = KMedoids(n_clusters=i, random_state=0).fit(distmat)
+            #print(kmedoids)
             avg_score = metrics.silhouette_score(distmat, kmedoids.labels_)
             if max_score<avg_score:
                 max_score=avg_score
@@ -254,35 +265,27 @@ class Phylo_to_Clonal:
         for i in range(0,max(self.labels)+1):
             self.dic_num[i]=np.count_nonzero(self.labels==i)
             
-    def show(self,root):
+    def show2(self,root):
         if len(root.clades)==0:
-            for i in range(0,max(self.labels)+1):
-                if root.name in self.cell_labels[i]:
-                #print(root.name,i)
-                    return [root.name],i
-        else:
-            a,a_i=self.show(root.clades[0])
-            b,b_i=self.show(root.clades[1])
-            #print(a,a_i,b,b_i)
-            if a_i==b_i and a_i!=len(self.labels)+1:
-                if len(a+b)==self.dic_num[a_i]:
-                    #print(a_i,"full")
-                    self.dic_num[a_i]=root
-                    return [], len(self.labels)+1
-                else: return a+b,a_i
-            elif a_i>max(self.labels):return b,b_i
-            elif b_i>max(self.labels):return a,a_i
-            elif len(a)<len(b):
-                self.dic_num[a_i]-=len(a)
-                return b, b_i
-            elif len(b)<len(a):
-                self.dic_num[b_i]-=len(b)
-                return a,a_i
-            elif len(a)==len(b):
-                self.dic_num[a_i]-=len(a)
-                self.dic_num[b_i]-=len(b)
-                return [], len(self.labels)+1
+            return -1
+        for i in root.clades:
+            ret=self.show2(i)
+            if ret==-1:
+                self.cell_root[i.name]=root
+                
+    def get_root(self):
+        for p,i in enumerate(self.cell_labels):
+            comm=self.tree.get_path(self.cell_root[i[0]])
+            for j in i[1:]:
+                ls=self.tree.get_path(self.cell_root[j])
+                comm=[k for k in ls if k in comm]
+            if len(comm)!=0:
+                self.dic_num[p]=comm[-1]
+            else : self.dic_num[p]=self.oneclade
+        
+        
     def optimize(self):
+        '''
         for i in range(0,max(self.labels)+1):
             if type(self.dic_num[i])!=int:ls=self.tree.get_path(self.dic_num[i])
             else: 
@@ -295,62 +298,89 @@ class Phylo_to_Clonal:
                     ls.pop()
                     continue
                 f=False
+        print(self.dic_num,"done1")
+        '''
         for i in range(0,max(self.labels)+1):
             if i in self.dic_num.keys():
-                self.dic_num[self.dic_num[i]]=i 
+                if self.dic_num[i] not in self.dic_num.keys():
+                    self.dic_num[self.dic_num[i]]=[i] 
+                else:
+                    self.dic_num[self.dic_num[i]].append(i) 
+                #print(self.dic_num[i].name,i)
                 del self.dic_num[i]
+
+        self.comm=[]
+        #print(self.dic_num,"done")
+        for j in self.dic_num.keys():
+            self.comm=list(set(self.comm+self.tree.get_path(j)))
+            #print(self.tree.get_path(j))
+        #print(self.comm)
+            
     def node(self,typ,add,pr):
         if typ==1:
-            self.dot.node(str(self.c),",".join(self.cell_labels[self.dic_num[add]]))
+            self.dot.node(str(self.c),",".join(self.cell_labels[add]))
             self.dot.edge(str(pr),str(self.c))
             self.c=self.c+1
-            del self.dic_num[add]
         else:
             self.dot.node(str(self.c)," ")
             self.dot.edge(str(pr),str(self.c))
             self.c=self.c+1
             
-    def tree_to_dot(self,root,prev_ele,flag):
-        #print(self.dic_num,root)
+    def tree_to_dot(self,root,prev_ele):
+        #print(root,flag)
+        if root==self.oneclade and root in self.dic_num.keys():
+            for i in self.dic_num[root]:
+                self.node(1,i,prev_ele)
         if len(root.clades)==0:return
         a,b=root.clades
         cnt=0
         if a in self.dic_num.keys():cnt+=1
         if b in self.dic_num.keys():cnt+=2
-        if cnt==0 and flag==0:
-             self.node(0,a,prev_ele)
-             self.tree_to_dot(a,self.c-1,0)
-             self.node(0,b,prev_ele)
-             self.tree_to_dot(b,self.c-1,0)
-        if cnt==0 and flag==1:return
+        if cnt==0:
+            if a in self.comm: 
+                 self.node(0,a,prev_ele)
+                 self.tree_to_dot(a,self.c-1)
+            if b in self.comm:
+                 self.node(0,b,prev_ele)
+                 self.tree_to_dot(b,self.c-1)
         elif cnt==1:
-            self.node(1,a,prev_ele)
-            self.tree_to_dot(a,self.c-1,1)
-            if self.dic_num!={}:
+            for i in self.dic_num[a]:
+                self.node(1,i,prev_ele)
+            self.tree_to_dot(a,self.c-1)
+            if b in self.comm:
                 self.node(0,b,prev_ele)
-                self.tree_to_dot(b,self.c-1,0)
+                self.tree_to_dot(b,self.c-1)
         elif cnt==2:
-            self.node(1,b,prev_ele)
-            self.tree_to_dot(b,self.c-1,1)
-            if self.dic_num!={}:
+            for i in self.dic_num[b]:
+                self.node(1,i,prev_ele)
+            self.tree_to_dot(b,self.c-1)
+            if a in self.comm:
                 self.node(0,a,prev_ele)
-                self.tree_to_dot(a,self.c-1,0)
+                self.tree_to_dot(a,self.c-1)
         elif cnt==3:
-            self.node(1,a,prev_ele)
-            self.tree_to_dot(a,self.c-1,1)
-            self.node(1,b,prev_ele)
-            self.tree_to_dot(b,self.c-1,1)
+            for i in self.dic_num[a]:
+                self.node(1,i,prev_ele)
+            self.tree_to_dot(a,self.c-1)
+            for i in self.dic_num[b]:
+                self.node(1,i,prev_ele)
+                #print(i)
+            self.tree_to_dot(b,self.c-1)
                 
     def convert(self):
         distmat=self.dist()
         self.sil_score(distmat)
-        oneclade=list(self.tree.find_clades(terminal=False,order='level'))[0]
+        self.oneclade=list(self.tree.find_clades(terminal=False,order='level'))[0]
         self.create_cell_labels()
+        #print(self.labels)
+        #print(self.cell_labels,len(self.cell_labels))
         self.fill_dic()
-        self.show(oneclade)
+        #print(self.dic_num)
+        self.show2(self.oneclade)
+        self.get_root() 
+        #print(self.dic_num)
         self.optimize()
-        print(self.dic_num)
-        self.tree_to_dot(oneclade,0,0)
+        #print(self.dic_num)
+        self.tree_to_dot(self.oneclade,0)
         return self.dot
 
 

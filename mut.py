@@ -7,10 +7,12 @@ import numpy as np
 from sklearn_extra.cluster import KMedoids
 from sklearn import metrics
 
+#2 to 21 issue to be seen
+
 class Mut_to_Clonal:
-    def __init__(self,in_tree,matri):
+    def __init__(self,in_tree,matrix,z):
         self.tree=in_tree
-        self.matrix=matri
+        self.matrix=matrix
         self.mapp={}
         self.root=list(self.tree.find_clades(terminal=False,order='level'))[0]
         self.c=1
@@ -22,7 +24,8 @@ class Mut_to_Clonal:
         self.labels=[]
         self.dic_num={}
         self.place={}
-
+        self.cell=min(matrix.shape[1],21)
+        self.z=z
    
     def mut_mean(self,node_des,prev_mut):
         temp_pd=pd.DataFrame()
@@ -30,7 +33,8 @@ class Mut_to_Clonal:
             if i.confidence!=None:muta=int(i.confidence)
             else :muta=int(i.name)
             if int(muta)<=len(self.matrix):
-                temp_pd[muta]=self.matrix.loc[muta-1,:]
+                if self.z:temp_pd[muta]=self.matrix.loc[muta,:]
+                else:temp_pd[muta]=self.matrix.loc[muta-1,:]
         mut_list=[]
         for i in range(len(temp_pd)):
             d=1
@@ -83,14 +87,16 @@ class Mut_to_Clonal:
                     
     def sil_score(self):
         max_score=0
-        for i in range(2,21):
+        for i in range(2,self.cell):
             avg_score=0
             kmedoids = KMedoids(n_clusters=i, random_state=0).fit(self.distmat)
             #print(i,kmedoids.labels_)
             if max(kmedoids.labels_)>0:avg_score=metrics.silhouette_score(self.distmat, kmedoids.labels_)
+            #print(avg_score)
             if max_score<avg_score:
                 max_score=avg_score
-                self.labels=kmedoids.labels_   
+                self.labels=kmedoids.labels_
+        #print(self.labels)
         for i in range(len(self.keys)):
             self.mut_map[self.keys[i]]=[self.mut_map[self.keys[i]],self.labels[i]]
     def fill_dic(self):
@@ -141,12 +147,14 @@ class Mut_to_Clonal:
             self.labels[i]=temp
             
     def show(self,root,prev):
+        #print(prev,root.confidence,root.clades,"prev")
         for i in self.place.keys():
             if root==self.place[i]:
                 self.dot.node(str(self.c)," ".join(self.labels[i]))
                 self.dot.edge(str(prev),str(self.c))
                 self.c=self.c+1
-        prev=self.c-1
+                prev=self.c-1
+        #print(prev,root.confidence)
         for i in root.clades:
             self.show(i,prev)              
         
@@ -157,15 +165,15 @@ class Mut_to_Clonal:
         self.fill_dic()
         self.placing(self.root)
         self.cluster()
-        print(self.place)
+        #print(self.place)
         self.show(self.root,0)
         return self.dot
     
 
 class Mut_to_Phylo:
-    def __init__(self,in_tree,matri):
+    def __init__(self,in_tree,matrix,z):
         self.tree=in_tree
-        self.matrix=matri
+        self.matrix=matrix
         self.mapp={}
         self.root=list(self.tree.find_clades(terminal=False,order='level'))[0]
         self.c=1
@@ -174,6 +182,7 @@ class Mut_to_Phylo:
         self.dot.node('0','N')
         self.mut_map={}
         self.labels=[]
+        self.z=z
 
    
     def mut_mean(self,node_des,prev_mut):
@@ -182,7 +191,8 @@ class Mut_to_Phylo:
             if i.confidence!=None:muta=int(i.confidence)
             else :muta=int(i.name)
             if int(muta)<=len(self.matrix):
-                temp_pd[muta]=self.matrix.loc[muta-1,:]
+                if self.z:temp_pd[muta]=self.matrix.loc[muta,:]
+                else: temp_pd[muta]=self.matrix.loc[muta-1,:]
         mut_list=[]
         for i in range(len(temp_pd)):
             d=1
@@ -265,7 +275,7 @@ class Mut_to_Phylo:
             
     def convert(self):
         self.transverse([self.root])
-        print(self.mut_map)
+        #print(self.mut_map)
         self.reconstruction(self.root,0)
         return self.dot
     
