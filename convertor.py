@@ -130,13 +130,13 @@ z=False
 arg=sys.argv
 if len(arg)==1:
     ch=int(input("Enter the tree format for input:-\n1. Phylogenetic Tree\n2. Clonal Tree\n3. Mutation Tree.\n"))
-    gr=bool(input("The input tree is in igraph format? 1 or 0?"))
-    x=bool(input("The numbering of cell in the current tree starts from 0 or 1?"))
+    gr=bool(input("The input tree is in igraph format? 1 or 0?\n"))
+    x=bool(input("The numbering of cell/mutations in the current tree starts from 0 or 1?\n"))
     
 else:
     arg=arg[1:]
     short_options="t:i:m:o:f:r:gz"
-    long_options=["tree","input","matrix","output","filename","result","igraph"]
+    long_options=["tree","input","matrix","output","filename","result","igraph","zero"]
     try:
         arguments, values = getopt.getopt(arg, short_options, long_options)
     except getopt.error as err:
