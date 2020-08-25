@@ -1,0 +1,7 @@
+python convertor.py -t 1 -i /home/deepank/Downloads/Prof_Hamim/Convertor_project/Code/outputs/dataset2_sifit.newick -m /home/deepank/Downloads/Prof_Hamim/Convertor_project/Code/outputs/dataset2.txt -o /home/deepank/Downloads/Prof_Hamim/Convertor_project/Code/outputs -r 3
+
+python convertor.py -t 2 -i /home/deepank/Downloads/Prof_Hamim/Convertor_project/Code/outputs/dataset2_OncoNEM.txt -m /home/deepank/Downloads/Prof_Hamim/Convertor_project/Code/outputs/dataset2.txt -o /home/deepank/Downloads/Prof_Hamim/Convertor_project/Code/outputs -r 3 -g
+
+python convertor.py -t 2 -i /home/deepank/Downloads/Prof_Hamim/Convertor_project/Code/outputs/dataset2_siclonefit.txt -m /home/deepank/Downloads/Prof_Hamim/Convertor_project/Code/outputs/dataset2.txt -o /home/deepank/Downloads/Prof_Hamim/Convertor_project/Code/outputs -r 3
+
+python convertor.py -t 3 -i /home/deepank/Downloads/Prof_Hamim/Convertor_project/Code/outputs/dataset2_scite.newick -m /home/deepank/Downloads/Prof_Hamim/Convertor_project/Code/outputs/dataset2.txt -o /home/deepank/Downloads/Prof_Hamim/Convertor_project/Code/outputs -r 1
