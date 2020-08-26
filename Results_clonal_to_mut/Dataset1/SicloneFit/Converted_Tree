@@ -1,7 +1,7 @@
 // Clonal Tree
 digraph {
 	0 [label=N]
-	1 [label="C:6"]
+	1 [label=C_6]
 	0 -> 1
 	2 [label=47]
 	0 -> 2
@@ -21,7 +21,7 @@ digraph {
 	8 -> 9
 	10 [label=50]
 	9 -> 10
-	11 [label="C:0"]
+	11 [label=C_0]
 	10 -> 11
 	12 [label=24]
 	2 -> 12
@@ -31,11 +31,11 @@ digraph {
 	13 -> 14
 	15 [label=46]
 	14 -> 15
-	16 [label="C:1"]
+	16 [label=C_1]
 	15 -> 16
 	17 [label=41]
 	2 -> 17
-	18 [label="C:5"]
+	18 [label=C_5]
 	17 -> 18
 	19 [label=20]
 	0 -> 19
@@ -71,16 +71,16 @@ digraph {
 	33 -> 34
 	35 [label=49]
 	34 -> 35
-	36 [label="C:3"]
+	36 [label=C_3]
 	35 -> 36
-	37 [label="C:7"]
+	37 [label=C_7]
 	20 -> 37
 	38 [label=39]
 	0 -> 38
 	39 [label=43]
 	38 -> 39
-	40 [label="C:2"]
+	40 [label=C_2]
 	39 -> 40
-	41 [label="C:4"]
+	41 [label=C_4]
 	39 -> 41
 }

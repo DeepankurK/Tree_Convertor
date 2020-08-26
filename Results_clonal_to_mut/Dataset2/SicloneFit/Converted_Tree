@@ -7,7 +7,7 @@ digraph {
 	1 -> 2
 	3 [label=3]
 	2 -> 3
-	4 [label="C:0"]
+	4 [label=C_0]
 	3 -> 4
 	5 [label=6]
 	2 -> 5
@@ -15,10 +15,10 @@ digraph {
 	5 -> 6
 	7 [label=8]
 	6 -> 7
-	8 [label="C:2"]
+	8 [label=C_2]
 	7 -> 8
 	9 [label=9]
 	6 -> 9
-	10 [label="C:1"]
+	10 [label=C_1]
 	9 -> 10
 }

@@ -44,7 +44,7 @@ def graph_to_dot(content):
     #print(dot
     return dot  
   
-def dot_to_newick(dot):
+def dot_to_newick(dot,save=False):
     label={}
     #print(dot)
     for i in str(dot).split("\n"):
@@ -68,6 +68,18 @@ def dot_to_newick(dot):
     for i in label.keys():
         if ','+str(i)+':' not in q and '('+str(i)+':' not in q and ')' +str(i)+':' not in q:
             q=q.split(';')[0]+str(i)+':0.5;'
+    #print(save)
+    if save:
+        i=0
+        while(i<len(q)):
+            if q[i] in ['(',')',','] and q[i+1] not in ['(',')','.']:
+                if q.index(':',i)!=-1:
+                    j=q.index(':',i)
+                    k=q[i+1:j]
+                    #print(k)
+                    q=q[:i+1]+k.replace(k,label[k],1)+q[j:]
+                    i=i+len(k)
+            i=i+1
     #print(q)
     return q,label
 
@@ -98,8 +110,7 @@ def phylo_tree(content,typ=0):
         obj=phylo.Phylo_to_Clonal(in_tree,matrix,z)
     dot=obj.convert()
     #print(dot)
-    newick,_=dot_to_newick(dot)
-    return newick,dot
+    return dot
     
 def clonal_tree(gr,content,typ=0):
     in_tree,matrix,label=input_func('c',content,gr)
@@ -110,8 +121,7 @@ def clonal_tree(gr,content,typ=0):
     if typ==3:
         obj=clonal.Clonal_to_Mut(in_tree,matrix,label,gr,z)
     dot=obj.convert()
-    newick,_=dot_to_newick(dot)
-    return newick,dot
+    return dot
     
 def muta_tree(content,typ=0):
     in_tree,matrix=input_func('m',content)
@@ -122,8 +132,7 @@ def muta_tree(content,typ=0):
     if typ==1:
         obj=mut.Mut_to_Phylo(in_tree,matrix,z)
     dot=obj.convert()
-    newick,_=dot_to_newick(dot)
-    return newick,dot
+    return dot
 
 gr=False
 z=False
@@ -180,13 +189,14 @@ matrix=matrix.replace(2,1)
 
 print("Output will be stored in results folder.")
 if ch==1:
-    newick,dot=phylo_tree(content,typ)
+    dot=phylo_tree(content,typ)
 elif ch==2:
-    newick,dot=clonal_tree(gr,content,typ)
+    dot=clonal_tree(gr,content,typ)
 elif ch==3:
-    newick,dot=muta_tree(content,typ)
+    dot=muta_tree(content,typ)
 else:
     print("Wrong Tree Choice inputted.")
     sys.exit(2)
+newick,_=dot_to_newick(dot,save=True)
 dot.render(filename=filename,directory=path_output)
 write(newick)

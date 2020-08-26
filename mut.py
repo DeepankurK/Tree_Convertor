@@ -240,11 +240,11 @@ class Mut_to_Phylo:
         while(l!=1):
             self.make(prev,self.c," ")
             prev=self.c-1
-            self.make(prev,self.c,'Cell:'+ls[l-1])
+            self.make(prev,self.c,'Cell_'+ls[l-1])
             l-=1
-        self.make(prev,self.c,'Cell:'+ls[0])
+        self.make(prev,self.c,'Cell_'+ls[0])
     def name(self,i):
-        if i.confidence==None: return 'Mut:'+str(i.name)
+        if i.confidence==None: return 'Mut_'+str(i.name)
         return 'Mut:'+str(i.confidence)
     def reconstruction(self,root,prev):
         if len(root.clades)>1:

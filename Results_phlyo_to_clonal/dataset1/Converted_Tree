@@ -1,22 +1,22 @@
 // Mutation Tree
 digraph {
 	0 [label=N]
-	1 [label="sc19,sc11,sc82,sc9,sc41,sc23,sc22,sc32,sc1,sc34,sc31,sc85,sc47,sc24,sc39,sc53,sc78,sc45,sc6,sc86,sc64,sc16,sc67,sc13"]
+	1 [label="sc19 sc11 sc82 sc9 sc41 sc23 sc22 sc32 sc1 sc34 sc31 sc85 sc47 sc24 sc39 sc53 sc78 sc45 sc6 sc86 sc64 sc16 sc67 sc13"]
 	0 -> 1
-	2 [label="sc33,sc21,sc76,sc60,sc73,sc36,sc59,sc98,sc46,sc25,sc90,sc71,sc50,sc15,sc2,sc100,sc93,sc56,sc10,sc62,sc37,sc20,sc4,sc29"]
+	2 [label="sc33 sc21 sc76 sc60 sc73 sc36 sc59 sc98 sc46 sc25 sc90 sc71 sc50 sc15 sc2 sc100 sc93 sc56 sc10 sc62 sc37 sc20 sc4 sc29"]
 	0 -> 2
 	3 [label=" "]
 	0 -> 3
 	4 [label=" "]
 	3 -> 4
-	5 [label="sc44,sc17,sc28,sc14,sc69,sc18,sc99,sc48,sc30,sc88,sc61,sc27,sc51,sc5,sc38"]
+	5 [label="sc44 sc17 sc28 sc14 sc69 sc18 sc99 sc48 sc30 sc88 sc61 sc27 sc51 sc5 sc38"]
 	4 -> 5
-	6 [label="sc94,sc77,sc55,sc70,sc75,sc63,sc58,sc96,sc42,sc83,sc87,sc35,sc81,sc84,sc92,sc52,sc65,sc54,sc95"]
+	6 [label="sc94 sc77 sc55 sc70 sc75 sc63 sc58 sc96 sc42 sc83 sc87 sc35 sc81 sc84 sc92 sc52 sc65 sc54 sc95"]
 	4 -> 6
 	7 [label=" "]
 	6 -> 7
 	8 [label=" "]
 	7 -> 8
-	9 [label="sc79,sc40,sc66,sc89,sc68,sc74,sc57,sc8,sc43,sc97,sc26,sc80,sc7,sc12,sc72,sc3,sc49,sc91"]
+	9 [label="sc79 sc40 sc66 sc89 sc68 sc74 sc57 sc8 sc43 sc97 sc26 sc80 sc7 sc12 sc72 sc3 sc49 sc91"]
 	8 -> 9
 }

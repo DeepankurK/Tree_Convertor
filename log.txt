@@ -2,8 +2,10 @@ Use this file to keep log of the steps you are performing.
 
 Left steps:-
 
-1. Only Clonal to Phlo os rmaining.
-2. No metrics have been implemented for distance calculation or tree comparison.
+1. Only Clonal to Phylo is remaining.
+2. In Mut to phylo, inter ordering of cells at a mutation is remaining.
+3. Tesing of Pair wise, RF and MTLD distance is remaining on converted trees. Its working fine on trees of 4 algorithms.
+
 
 
 

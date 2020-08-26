@@ -17,30 +17,52 @@ filename="Converted_Tree"
 dot=""
 content=""
 class tree:
-    def __init__(self,tree,x):
+    def __init__(self,tree,x,ch='a',label={}):
         self.tree=tree
         self.x=x
+        self.clus_label=label
+        #print(self.clus_label)
         self.label={}
+        self.ch=ch
+        #print(ch)
         self.root=list(self.tree.find_clades(terminal=False,order='level'))[0]
         
     def show(self,node=None):
         if node==None:
             node=self.root
-        print(node,node.name,node.confidence,(len(node.clades)))
+        #print(node,node.name,node.confidence,(len(node.clades)))
         for i in node.clades:
             self.show(i)
+    def correct(self,st):
+        if self.x:return str(int(re.sub('\D','',st))+1)
+        else: return re.sub('\D','',st)
+        
     def create_label(self,node=None):
         if node==None:
             node=self.root
-        if node.confidence != None: self.label[str(node.confidence)]=node
-        elif node.name!=None: self.label[str(node.name)]=node
+        if self.ch=='c':
+            if self.clus_label!={}:
+                if node.confidence != None: s=str(node.confidence)
+                elif node.name!=None: s=str(node.name)
+                #print(self.clus_label[s].split(" "))
+                for i in self.clus_label[s].split(" "):
+                    if i !='':
+                        self.label[self.correct(i)]=node
+            elif node.name!=None and 'C' in node.name:
+                for i in node.clades:
+                    self.label[self.correct(str(i.name))]=node
+                return
+        else:
+            if node.confidence != None and 'C_' not in str(node.confidence) and 'N' not in str(node.confidence): self.label[self.correct(str(node.confidence))]=node
+            elif node.name!=None and 'C_' not in str(node.name) and 'N' not in str(node.name): self.label[self.correct(str(node.name))]=node
         for i in node.clades:
             self.create_label(i)
             
     def delete_head(self,node):
         if str(node.confidence) in self.label.keys(): del self.label[str(node.confidence)]
         elif str(node.name) in self.label.keys(): del self.label[str(node.name)]
-    
+        self.leafs=len(self.label.keys())
+        
     def create_distmat(self):
         for k,x in enumerate(self.label.keys()):
             self.label[x]=[self.label[x],k]
@@ -48,33 +70,45 @@ class tree:
         self.leafs=len(self.label.keys())
         self.distmat=np.zeros((self.leafs, self.leafs))
         ls=list(self.label.keys())
-        print(self.tree.get_path(self.label[ls[1]][0]),self.tree.get_path(self.label[ls[2]][0]))
+        #print(self.tree.get_path(self.label[ls[11]][0]))
+        #print(self.tree.get_path(self.label[ls[1]][0]),self.tree.get_path(self.label[ls[2]][0]))
         for i in range(0,self.leafs-1):
             for j in range(i+1,self.leafs):
                 temp1=self.tree.get_path(self.label[ls[i]][0])
                 temp2=self.tree.get_path(self.label[ls[j]][0])
                 self.distmat[i][j]=len([k for k in temp1+temp2 if (k not in temp1 and k in temp2) or (k in temp1 and k not in temp2) ])
+                #print(self.distmat[i][j])
         self.sum=np.sum(self.distmat)
         
         
 class compare_tree:
-    def __init__(self,tree1,tree2,x,y,typ):
-        self.obj1=tree(tree1,x)
-        self.obj2=tree(tree2,y)
+    def __init__(self,tree1,tree2,x,y,typ,ch='a',label1={},label2={}):
+        self.obj1=tree(tree1,x,ch,label1)
+        self.obj2=tree(tree2,y,ch,label2)
         self.typ=typ
+        self.ch='c'
     def pair(self,obj1,obj2):
+        if obj1.leafs!=obj2.leafs:
+            print("Number of cells are not equal in both trees.\n"+str(obj1.leafs)+" in 1st Tree and "+str(obj2.leafs)+" in 2nd Tree.")
+            temp1=list(obj1.label.keys())
+            temp2=list(obj2.label.keys())
+            ls=[k for k in temp1+temp2 if (k not in temp1 and k in temp2) or (k in temp1 and k not in temp2) ]
+            for i in ls:
+                print("Label "+i+" is not present in both trees therefore removed from calculations")
+                if i in temp1:del obj1.label[i]
+                if i in temp2:del obj2.label[i]
+        l=obj1.leafs
         obj1.create_distmat()
         obj2.create_distmat()
-        print("Tree1 pairwise cell distance:- "+str(obj1.sum))
+        print("Tree1 pairwise shortest-path cell distance:- "+str(obj1.sum))
         print("Tree2 pairwise shortest-path cell distance:- "+str(obj2.sum))
-        l=obj1.leafs
-        if obj1.leafs!=obj2.leafs:print("Not equal")
-        else: print(obj1.leafs)
-        #to be done
-        
         print("Overall pairwise cell shortest-path distance:- "+ str(abs(obj1.sum-obj2.sum)))
         print("Normalized pairwise cell shortest-path distance:- "+str((2*abs(obj1.sum-obj2.sum))/(l*(l-1))))
-
+    
+    def rf(self,obj1,obj2):
+        pass
+    def mtld(self,obj1,obj2):
+        pass
     def compare(self):
         self.obj1.show()
         self.obj1.create_label()
@@ -83,8 +117,12 @@ class compare_tree:
         self.obj2.show()
         self.obj2.create_label()
         self.obj2.delete_head(self.obj2.root)
-        #print(self.obj1.label)
+        #print(self.obj2.label)
         if self.typ==1:self.pair(self.obj1,self.obj2)
+        elif self.typ==2: self.rf(self.obj1,self.obj2)
+        elif self.typ==3:self.mtld(self.obj1,self.obj2)
+        else: print("Wrong metric choice" )
+        
 def graph_to_dot(content):
     c=0
     dot=Digraph()
@@ -150,22 +188,23 @@ def input_func(ch,content,num,gr=False):
     return tree
 
 def phylo_tree(content1,content2,typ,x,y):
+
     tree1=input_func('p',content1,1)
     tree2=input_func('p',content2,2)
-    obj=compare_tree(tree1,tree2,x,y,typ)
+    obj=compare_tree(tree1,tree2,x,y,typ,'p')
     obj.compare()
 
     
 def clonal_tree(content1,content2,typ,p,q,x,y):
     tree1,label1=input_func('c',content1,1,p)
     tree2,label2=input_func('c',content2,2,q)
-    obj=compare_tree(tree1,tree2,x,y,typ)
+    obj=compare_tree(tree1,tree2,x,y,typ,'c',label1,label2)
     obj.compare()
     
 def muta_tree(content1,content2,typ,x,y):
     tree1=input_func('m',content1,1)
     tree2=input_func('m',content2,2)
-    obj=compare_tree(tree1,tree2,x,y,typ)
+    obj=compare_tree(tree1,tree2,x,y,typ,'m')
     obj.compare()
 
     

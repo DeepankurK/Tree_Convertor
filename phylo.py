@@ -120,7 +120,7 @@ class Phylo_to_Mut:
         for i in range(len(temp_pd)):
             if temp_pd.loc[i,cell]==1:
                 mut_list.append(str(i+1))
-        mut_list.append("C:"+node_des.name)
+        mut_list.append("Cell_"+str(cell))
         #print(mut_list,"mut_list")
         return mut_list
     
@@ -169,6 +169,7 @@ class Phylo_to_Mut:
         self.dot.edge(str(n),str(m))
     
     def tree_to_dot(self,root,el_prev):
+        #print(root.br_mut,el_prev)
         for i,k in zip(root.br_mut,root.nodes):
             d=self.c
             #print(i,k.br_mut,len(k.nodes))
@@ -209,12 +210,21 @@ class Phylo_to_Mut:
         if root.n2!=None:self.back_mut(root.n2)
         
     def convert(self,typ=False):
-        _,root=self.transverse(self.tree.get_nonterminals()[0])
+        comm,root=self.transverse(self.tree.get_nonterminals()[0])
+        print(root.comm)
         root2=Node_2()
         root2.optimize(root,root2)
         root2.show()
+        el_prev=0
+        if len(comm)!=0:
+            self.create_node(comm[0])
+            self.create_edge(0,comm[0],0,len(comm))
+            for j in range(1,len(comm)):
+                self.create_node(comm[j])
+                self.create_edge(comm[j-1],comm[j],0,len(comm))
+            el_prev=comm[-1]
        #if typ:self.optimize(root)
-        self.tree_to_dot(root2,0)        
+        self.tree_to_dot(root2,el_prev)        
         return self.dot
 
 class Phylo_to_Clonal:
@@ -236,7 +246,7 @@ class Phylo_to_Clonal:
         
     def dist(self):
          self.allclades=list(self.tree.find_clades(terminal=True,order='level'))
-         self.leafs=len(self.allclades)
+         self.leafs=len(self.allclades)             
          distmat=np.zeros((self.leafs, self.leafs))
          for i in range(0,self.leafs-1):
              for j in range(i+1,self.leafs):
@@ -318,7 +328,7 @@ class Phylo_to_Clonal:
             
     def node(self,typ,add,pr):
         if typ==1:
-            self.dot.node(str(self.c),",".join(self.cell_labels[add]))
+            self.dot.node(str(self.c)," ".join(self.cell_labels[add]))
             self.dot.edge(str(pr),str(self.c))
             self.c=self.c+1
         else:
@@ -331,8 +341,10 @@ class Phylo_to_Clonal:
         if root==self.oneclade and root in self.dic_num.keys():
             for i in self.dic_num[root]:
                 self.node(1,i,prev_ele)
+                print(self.cell_labels[i])
         if len(root.clades)==0:return
         a,b=root.clades
+        #print(a.branch_length,b.branch_length)
         cnt=0
         if a in self.dic_num.keys():cnt+=1
         if b in self.dic_num.keys():cnt+=2
