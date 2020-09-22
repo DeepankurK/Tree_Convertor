@@ -6,14 +6,15 @@ from collections import Counter
 import numpy as np
 from sklearn_extra.cluster import KMedoids
 from sklearn import metrics
-
+import re
 #2 to 21 issue to be seen
 
 class Mut_to_Clonal:
-    def __init__(self,in_tree,matrix,z):
+    def __init__(self,in_tree,matrix,label={},z=False,gv=False):
         self.tree=in_tree
         self.matrix=matrix
         self.mapp={}
+        self.label=label
         self.root=list(self.tree.find_clades(terminal=False,order='level'))[0]
         self.c=1
         self.dot=Digraph(comment="Clonal Tree",format='png')
@@ -26,12 +27,16 @@ class Mut_to_Clonal:
         self.place={}
         self.cell=min(matrix.shape[1],21)
         self.z=z
-   
+        self.mut_ls=[]
+        self.gv=gv
+        
     def mut_mean(self,node_des,prev_mut):
         temp_pd=pd.DataFrame()
         for i in node_des:
             if i.confidence!=None:muta=int(i.confidence)
             else :muta=int(i.name)
+            if self.gv:
+                 muta=int(re.sub('\D', '',str(self.label[str(muta)])))
             if int(muta)<=len(self.matrix):
                 if self.z:temp_pd[muta]=self.matrix.loc[muta,:]
                 else:temp_pd[muta]=self.matrix.loc[muta-1,:]
@@ -57,7 +62,6 @@ class Mut_to_Clonal:
             self.cell_map[nodes[-1]]=ls
             for i in ls:
                 self.mut_map[i]=nodes[-1]
-                
             return ls
         else:
             mut_clus=[]
@@ -85,6 +89,7 @@ class Mut_to_Clonal:
                     b=self.tree.get_path(self.mut_map[self.keys[j]])
                     self.distmat[i][j]=len(list(set([i for i in a+b if (i in a and i not in b) or (i in b and i not in a)])))
                     
+    
     def sil_score(self):
         max_score=0
         for i in range(2,self.cell):
@@ -99,12 +104,14 @@ class Mut_to_Clonal:
         #print(self.labels)
         for i in range(len(self.keys)):
             self.mut_map[self.keys[i]]=[self.mut_map[self.keys[i]],self.labels[i]]
+    
     def fill_dic(self):
         self.dic_num={}
         for i in range(0,max(self.labels)+1):
             if np.count_nonzero(self.labels==i)!=0:
                 self.dic_num[i]=np.count_nonzero(self.labels==i)
                 
+    
     def set_place(self,root,a_i):
         if a_i not in self.place.keys(): 
             self.place[a_i]=root
@@ -145,12 +152,25 @@ class Mut_to_Clonal:
                 if i==self.mut_map[j][1]:
                     temp.append(j)
             self.labels[i]=temp
-            
+    def mut_show(self):
+        for i in self.place.keys():
+            #print(self.tree.get_path(self.place[i]),i)
+            self.mut_ls=list(set(self.mut_ls+self.tree.get_path(self.place[i])))
+        #self.mut_ls=[i.confidence if i.confidence!=None else i.name for i in self.mut_ls]
+        
     def show(self,root,prev):
         #print(prev,root.confidence,root.clades,"prev")
+        if root in self.mut_ls:
+            if root.confidence!=None:
+                self.dot.node(str(self.c),str(root.confidence))
+            else:
+                self.dot.node(str(self.c),str(root.name))
+            self.dot.edge(str(prev),str(self.c))
+            self.c=self.c+1
+            prev=self.c-1
         for i in self.place.keys():
             if root==self.place[i]:
-                self.dot.node(str(self.c)," ".join(self.labels[i]))
+                self.dot.node(str(self.c),"C: "+" ".join(self.labels[i]))
                 self.dot.edge(str(prev),str(self.c))
                 self.c=self.c+1
                 prev=self.c-1
@@ -160,21 +180,28 @@ class Mut_to_Clonal:
         
     def convert(self):
         self.transverse([self.root])
+        #print(self.mut_map)
+        #print(self.cell_map)
         self.create_dist()
         self.sil_score()
+        #print(self.mut_map)
         self.fill_dic()
         self.placing(self.root)
-        self.cluster()
         #print(self.place)
+        self.mut_show()
+       # print(self.mut_ls)
+        self.cluster()
+        #print(self.labels)
         self.show(self.root,0)
         return self.dot
     
 
 class Mut_to_Phylo:
-    def __init__(self,in_tree,matrix,z):
+    def __init__(self,in_tree,matrix,label={},z=False,gv=False):
         self.tree=in_tree
         self.matrix=matrix
         self.mapp={}
+        self.label=label
         self.root=list(self.tree.find_clades(terminal=False,order='level'))[0]
         self.c=1
         self.dot=Digraph(comment="Clonal Tree",format='png')
@@ -183,13 +210,15 @@ class Mut_to_Phylo:
         self.mut_map={}
         self.labels=[]
         self.z=z
-
+        self.gv=gv
    
     def mut_mean(self,node_des,prev_mut):
         temp_pd=pd.DataFrame()
         for i in node_des:
             if i.confidence!=None:muta=int(i.confidence)
             else :muta=int(i.name)
+            if self.gv:
+                muta=int(re.sub('\D', '',str(self.label[str(muta)])))
             if int(muta)<=len(self.matrix):
                 if self.z:temp_pd[muta]=self.matrix.loc[muta,:]
                 else: temp_pd[muta]=self.matrix.loc[muta-1,:]
@@ -240,12 +269,18 @@ class Mut_to_Phylo:
         while(l!=1):
             self.make(prev,self.c," ")
             prev=self.c-1
-            self.make(prev,self.c,'Cell_'+ls[l-1])
+            self.make(prev,self.c,'Cell: '+ls[l-1])
             l-=1
-        self.make(prev,self.c,'Cell_'+ls[0])
+        self.make(prev,self.c,'Cell: '+ls[0])
     def name(self,i):
-        if i.confidence==None: return 'Mut_'+str(i.name)
-        return 'Mut:'+str(i.confidence)
+        st=''
+        if self.gv:
+            if i.confidence==None:st=str(self.label[str(i.name)])
+            else: st=str(self.label[str(i.confidence)])
+        else:
+            if i.confidence==None:st=str(i.name)
+            else: st=str(i.confidence)
+        return st
     def reconstruction(self,root,prev):
         if len(root.clades)>1:
             if len(self.mut_map[root])>=1:

@@ -78,7 +78,7 @@ class Node:
 
 class Clonal_to_Mut:
 
-    def __init__(self,tree,matrix,label,gr,z):
+    def __init__(self,tree,matrix,label={},gr=False,z=False,gv=False):
         self.tree=tree
         self.matrix=matrix
         self.label=label
@@ -90,6 +90,7 @@ class Clonal_to_Mut:
         self.node_label={}
         self.gr=gr
         self.z=z
+        self.gv=gv
         
     def get_mut(self,ls):
         temp_pd=pd.DataFrame()
@@ -113,7 +114,7 @@ class Clonal_to_Mut:
         #print(node.name,node.confidence)
         if len(node.clades)==0:
             temp=self.get_mut(self.label[str(node.name)])
-            temp.append('C_'+str(node.name))
+            temp.append('C: '+str(node.name))
             #print(temp)
             return temp
         else:
@@ -124,7 +125,7 @@ class Clonal_to_Mut:
                 mut_clus.append(self.transverse(i))
                 muts=muts+mut_clus[-1]
             node_list=self.get_mut(self.label[str(node.confidence)])
-            node_list.append('C_'+str(node.confidence))
+            node_list.append('C: '+str(node.confidence))
             #print(node.confidence,node_list,mut_clus,"1")
             fr=dict(Counter(muts))
             for x,y in fr.items():
@@ -159,7 +160,7 @@ class Clonal_to_Mut:
         #print(node.name,node.confidence)
         if len(node.clades[0].clades)==0:
             temp=self.get_mut(self.label[re.sub('\D',"",node.name)])
-            temp.append('C_'+re.sub('\D',"",node.name))
+            temp.append('C: '+re.sub('\D',"",node.name))
             return temp
         else:
             mut_clus=[]
@@ -232,7 +233,7 @@ class Clonal_to_Mut:
            # elif len(k.nodes)==0:
             #    self.tree_to_dot(k,el_prev)
     def convert(self):
-        if not self.gr: 
+        if not self.gr and not self.gv: 
             self.label={}
             self.create_label(self.root)
             self.transverse2(self.root)
