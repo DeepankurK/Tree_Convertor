@@ -114,7 +114,7 @@ class Clonal_to_Mut:
         #print(node.name,node.confidence)
         if len(node.clades)==0:
             temp=self.get_mut(self.label[str(node.name)])
-            temp.append('C: '+str(node.name))
+            temp.append('C:'+str(node.name))
             #print(temp)
             return temp
         else:
@@ -125,7 +125,7 @@ class Clonal_to_Mut:
                 mut_clus.append(self.transverse(i))
                 muts=muts+mut_clus[-1]
             node_list=self.get_mut(self.label[str(node.confidence)])
-            node_list.append('C: '+str(node.confidence))
+            node_list.append('C:'+str(node.confidence))
             #print(node.confidence,node_list,mut_clus,"1")
             fr=dict(Counter(muts))
             for x,y in fr.items():
@@ -160,7 +160,7 @@ class Clonal_to_Mut:
         #print(node.name,node.confidence)
         if len(node.clades[0].clades)==0:
             temp=self.get_mut(self.label[re.sub('\D',"",node.name)])
-            temp.append('C: '+re.sub('\D',"",node.name))
+            temp.append('C:'+re.sub('\D',"",node.name))
             return temp
         else:
             mut_clus=[]

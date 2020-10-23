@@ -55,7 +55,8 @@ def dot_to_newick(dot,save=False):
     for i in str(dot).split("\n"):
         if "->" in i:
             q=i.split('->')
-            table.append((q[0].strip(),q[1].strip(),0.5))
+            if 's' not in q[1].strip().split(';')[0]:
+                table.append((q[0].strip(),q[1].strip().split(';')[0],0.5))
     #print(table)
     tree = Tree.from_parent_child_table(table)
     q=tree.write(format=1)
@@ -79,12 +80,15 @@ def dot_to_newick(dot,save=False):
 
 def input_func(ch,content,gv,gr=False):
     global path_matrix,path_output
+    #print("done",gv)
     label={}
     if ch=='c' and gr:       
         dot=graph_to_dot(content)
         content,label=dot_to_newick(dot)
     elif gv:
+        #print("done")
         content,label=dot_to_newick(content)
+    #print(content)
     handle=io.StringIO(content)
     tree=Phylo.read(handle,"newick")
     Phylo.draw(tree,do_show=False)
@@ -100,20 +104,24 @@ def write(content):
     file.write(content)
     file.close()
     
-def phylo_tree(content,typ=0,z=False,gv=False):
-    in_tree,matrix,label=input_func('p',content,gv)
+def phylo_tree(content,typ=0,z=False,gv=False,a=0,call=0,path=None):
+    global path_matrix
+    if call==1:path_matrix=path
+    in_tree,matrix,label=input_func('p',content,gv,call)
     if typ==0:
         typ=int(input("Select the tree for conversion:- \n 2 for Clonal Tree \n 3 for Mutation Tree \n"))
     if typ==3:
         obj=phylo.Phylo_to_Mut(in_tree,matrix,label,z,gv)
     if typ==2:
-        obj=phylo.Phylo_to_Clonal(in_tree,matrix,label,z,gv)
+        obj=phylo.Phylo_to_Clonal(in_tree,matrix,label,z,gv,a)
     dot=obj.convert()
     #print(dot)
     return dot
     
-def clonal_tree(content,typ=0,z=False,gv=False,gr=False):
-    in_tree,matrix,label=input_func('c',content,gv,gr)
+def clonal_tree(content,typ=0,z=False,gv=False,gr=False,call=0,path=None):
+    global path_matrix
+    if call==1:path_matrix=path
+    in_tree,matrix,label=input_func('c',content,gv,gr,call)
     if typ==0:
         typ=int(input("Select the tree for conversion:- \n 1 for Phylogenetc Tree \n 3 for Mutation Tree \n"))
     if typ==1:
@@ -123,12 +131,14 @@ def clonal_tree(content,typ=0,z=False,gv=False,gr=False):
     dot=obj.convert()
     return dot
     
-def muta_tree(content,typ=0,z=False,gv=False):
-    in_tree,matrix,label=input_func('m',content,gv)
+def muta_tree(content,typ=0,z=False,gv=False,a=0,call=0,path=None):
+    global path_matrix
+    if call==1:path_matrix=path
+    in_tree,matrix,label=input_func('m',content,gv,call)
     if typ==0:
         typ=int(input("Select the tree for conversion:- \n 1 for Phylogenetic Tree \n 2 for Clonal Tree \n"))
     if typ==2:
-        obj=mut.Mut_to_Clonal(in_tree,matrix,label,z,gv)
+        obj=mut.Mut_to_Clonal(in_tree,matrix,label,z,gv,a)
     if typ==1:
         obj=mut.Mut_to_Phylo(in_tree,matrix,label,z,gv)
     dot=obj.convert()
@@ -141,16 +151,18 @@ def main():
     dot=""
     gr=False
     z=False
+    a=0
     arg=sys.argv
     if len(arg)==1:
         ch=int(input("Enter the tree format for input:-\n1. Phylogenetic Tree\n2. Clonal Tree\n3. Mutation Tree.\n"))
         gr=bool(input("The input tree is in igraph format? 1 or 0?\n"))
         z=bool(input("The numbering of cell/mutations in the current tree starts from 0 or 1?\n"))
+        a=int(input("Enter the clustering algorithm to be used"))
         
     else:
         arg=arg[1:]
-        short_options="t:i:m:o:f:r:gz"
-        long_options=["tree","input","matrix","output","filename","result","igraph","zero"]
+        short_options="t:i:m:o:f:r:gza:"
+        long_options=["tree","input","matrix","output","filename","result","igraph","zero","algo"]
         try:
             arguments, values = getopt.getopt(arg, short_options, long_options)
         except getopt.error as err:
@@ -173,6 +185,8 @@ def main():
                 gr=True
             if curr_arg in ("-z","--zero"):
                 z=True
+            if curr_arg in ("-a","--algo"):
+                a=int(curr_val)
     #print(gr)
     gv=False
     if path_output=="":
@@ -187,15 +201,16 @@ def main():
         path_output+='results/'
     if path_input=="":
         path_input=input("Enter the path of input file.\n")
-        if '.gv' in path_input:
-            gv=True 
+    if '.gv' in path_input:
+        gv=True 
     content=open(path_input,"r").read()
+    #print(content)
     if ch==1:
-        dot=phylo_tree(content,typ,z,gv)
+        dot=phylo_tree(content,typ,z,gv,a)
     elif ch==2:
         dot=clonal_tree(content,typ,z,gv,gr)
     elif ch==3:
-        dot=muta_tree(content,typ,z,gv)
+        dot=muta_tree(content,typ,z,gv,a)
     else:
         print("Wrong Tree Choice inputted.")
         sys.exit(2)

@@ -7,10 +7,11 @@ import numpy as np
 from sklearn_extra.cluster import KMedoids
 from sklearn import metrics
 import re
+import cluster
 #2 to 21 issue to be seen
 
 class Mut_to_Clonal:
-    def __init__(self,in_tree,matrix,label={},z=False,gv=False):
+    def __init__(self,in_tree,matrix,label={},z=False,gv=False,a=0):
         self.tree=in_tree
         self.matrix=matrix
         self.mapp={}
@@ -29,13 +30,17 @@ class Mut_to_Clonal:
         self.z=z
         self.mut_ls=[]
         self.gv=gv
-        
+        self.num=0
+        self.a=a
     def mut_mean(self,node_des,prev_mut):
         temp_pd=pd.DataFrame()
+        #print(node_des)
         for i in node_des:
+            #print(i,i.name,i.confidence)
             if i.confidence!=None:muta=int(i.confidence)
-            else :muta=int(i.name)
-            if self.gv:
+            elif i.name!=None:muta=int(i.name)
+            else:muta=len(self.matrix)+1
+            if self.label!={}:
                  muta=int(re.sub('\D', '',str(self.label[str(muta)])))
             if int(muta)<=len(self.matrix):
                 if self.z:temp_pd[muta]=self.matrix.loc[muta,:]
@@ -90,18 +95,15 @@ class Mut_to_Clonal:
                     self.distmat[i][j]=len(list(set([i for i in a+b if (i in a and i not in b) or (i in b and i not in a)])))
                     
     
-    def sil_score(self):
-        max_score=0
-        for i in range(2,self.cell):
-            avg_score=0
-            kmedoids = KMedoids(n_clusters=i, random_state=0).fit(self.distmat)
-            #print(i,kmedoids.labels_)
-            if max(kmedoids.labels_)>0:avg_score=metrics.silhouette_score(self.distmat, kmedoids.labels_)
-            #print(avg_score)
-            if max_score<avg_score:
-                max_score=avg_score
-                self.labels=kmedoids.labels_
-        #print(self.labels)
+    def create_labels(self,distmat):
+        #print(distmat)
+        if self.a==1: self.labels=cluster.affinity(distmat)
+        elif self.a==2: self.labels=cluster.agglo(distmat,self.cell)
+        elif self.a==3: self.labels=cluster.birch(distmat,self.cell)
+        elif self.a==4: self.labels=cluster.kmeans(distmat,self.cell)
+        elif self.a==5: self.labels=cluster.kmediods(distmat,self.cell)
+        elif self.a==6: self.labels=cluster.optics(distmat)
+        elif self.a==7: self.labels=cluster.spectral(distmat,self.cell)   
         for i in range(len(self.keys)):
             self.mut_map[self.keys[i]]=[self.mut_map[self.keys[i]],self.labels[i]]
     
@@ -170,10 +172,15 @@ class Mut_to_Clonal:
             prev=self.c-1
         for i in self.place.keys():
             if root==self.place[i]:
-                self.dot.node(str(self.c),"C: "+" ".join(self.labels[i]))
+                self.dot.node(str(self.c),"C:"+str(self.num))
+                self.num=self.num+1
                 self.dot.edge(str(prev),str(self.c))
+                pr=self.c
+                for j in self.labels[i]:
+                    self.c=self.c+1
+                    self.dot.node(str(self.c),"Cell_"+str(j))
+                    self.dot.edge(str(pr),str(self.c))
                 self.c=self.c+1
-                prev=self.c-1
         #print(prev,root.confidence)
         for i in root.clades:
             self.show(i,prev)              
@@ -183,13 +190,13 @@ class Mut_to_Clonal:
         #print(self.mut_map)
         #print(self.cell_map)
         self.create_dist()
-        self.sil_score()
+        self.create_labels(self.distmat)
         #print(self.mut_map)
         self.fill_dic()
         self.placing(self.root)
         #print(self.place)
         self.mut_show()
-       # print(self.mut_ls)
+        #print(self.mut_ls)
         self.cluster()
         #print(self.labels)
         self.show(self.root,0)
