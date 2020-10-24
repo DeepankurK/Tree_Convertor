@@ -104,9 +104,11 @@ def write(content):
     file.write(content)
     file.close()
     
-def phylo_tree(content,typ=0,z=False,gv=False,a=0,call=0,path=None):
-    global path_matrix
-    if call==1:path_matrix=path
+def phylo_tree(content,typ=0,z=False,gv=False,a=0,call=0,path=None,path_out=None):
+    global path_matrix,path_output
+    if call==1:
+        path_matrix=path
+        path_output=path_out
     in_tree,matrix,label=input_func('p',content,gv,call)
     if typ==0:
         typ=int(input("Select the tree for conversion:- \n 2 for Clonal Tree \n 3 for Mutation Tree \n"))
@@ -118,9 +120,11 @@ def phylo_tree(content,typ=0,z=False,gv=False,a=0,call=0,path=None):
     #print(dot)
     return dot
     
-def clonal_tree(content,typ=0,z=False,gv=False,gr=False,call=0,path=None):
-    global path_matrix
-    if call==1:path_matrix=path
+def clonal_tree(content,typ=0,z=False,gv=False,gr=False,call=0,path=None,path_out=None):
+    global path_matrix,path_output
+    if call==1:
+        path_matrix=path
+        path_output=path_out
     in_tree,matrix,label=input_func('c',content,gv,gr,call)
     if typ==0:
         typ=int(input("Select the tree for conversion:- \n 1 for Phylogenetc Tree \n 3 for Mutation Tree \n"))
@@ -131,9 +135,11 @@ def clonal_tree(content,typ=0,z=False,gv=False,gr=False,call=0,path=None):
     dot=obj.convert()
     return dot
     
-def muta_tree(content,typ=0,z=False,gv=False,a=0,call=0,path=None):
-    global path_matrix
-    if call==1:path_matrix=path
+def muta_tree(content,typ=0,z=False,gv=False,a=0,call=0,path=None,path_out=None):
+    global path_matrix,path_output
+    if call==1:
+        path_matrix=path
+        path_output=path_out
     in_tree,matrix,label=input_func('m',content,gv,call)
     if typ==0:
         typ=int(input("Select the tree for conversion:- \n 1 for Phylogenetic Tree \n 2 for Clonal Tree \n"))

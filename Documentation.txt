@@ -6,6 +6,14 @@ Tree Codes:
 2. Clonal Tree.
 3. Mutation Tree.
 
+Conversion Algorithm number:-
+1. Affinity Propagation
+2. Agglomerative Clustering
+3. Birch
+4. KMeans
+5. KMedoids
+6. SpectralClustering
+
 Attibutes:
 
 -t: input tree code (required)
@@ -15,35 +23,38 @@ Attibutes:
 -r: typr to convert to (required)
 -z: flag whether cell numbers/mutaion numbers start from 1 (usually not given)
 -g: flag for igraph format
+-a: algorithm to be used
 
 
 Conversion Commands:-
 
 1. Phylogenetic to Clonal (SIFIT to clonal)
 
-python convertor.py -t 1 -i ./inputs/dataset2_sifit.newick -m ./inputs/dataset2.txt -o ./inputs -r 2
+python convertor.py -t 1 -i ./inputs/dataset2_sifit.newick -m ./inputs/dataset2.txt -o ./inputs -r 2 -a 2
 
 2. Phylogenetic to Mutational (SIFIT to mutational)
 
-python convertor.py -t 1 -i ./inputs/dataset2_sifit.newick -m ./inputs/dataset2.txt -o ./inputs -r 3
+python convertor.py -t 1 -i ./inputs/dataset2_sifit.newick -m ./inputs/dataset2.txt -o ./inputs -r 3 -a 2
 
 3. Mutational to Clonal (SCITE to Clonal)
-python convertor.py -t 3 -i ./inputs/dataset1_scite.newick -m ./inputs/dataset1.txt -o ./inputs -r 2
+python convertor.py -t 3 -i ./inputs/dataset1_scite.newick -m ./inputs/dataset1.txt -o ./inputs -r 2 -a 2
 
 4. Mutational to Phylogentic (SCITE to Phlogenetic)
- python convertor.py -t 3 -i ./inputs/dataset1_scite.newick -m ./inputs/dataset1.txt -o ./inputs -r 1
-
-
+ python convertor.py -t 3 -i ./inputs/dataset1_scite.newick -m ./inputs/dataset1.txt -o ./inputs -r 1 -a 2
 
 5. Clonal to Mutational
 
 SiCloneFIt:-
 
-python convertor.py -t 2 -i ./inputs/dataset1_siclonefit.txt -m ./inputs/dataset1.txt -o ./inputs -r 3 -z
+python convertor.py -t 2 -i ./inputs/dataset1_siclonefit.txt -m ./inputs/dataset1.txt -o ./inputs -r 3 -z -a 2
 
 onceNEM:-
 
 python convertor.py -t 2 -i ./inputs/dataset2_OncoNEM.txt -m ./inputs/dataset2.txt -o  ./inputs -r 3 -g
+
+
+
+
 
 Commands :- Compare Tree.
 
@@ -55,8 +66,16 @@ Tree Codes:
 
 Metric Choice:-
 1. Pair wise distance for Phylogenetic and Clonal trees
-2. RF distance for Phylogenetic and Clonal Tree
-3. Bourque's Distance for Mutation Tree
+2. Adjusted Rand Score 
+3. Adjusted Mutual Info Score
+4. V Measure Score
+5. Calinski Harabasz Score 
+6. Davies Bouldin Score
+7. Completeness Score 
+8. Fowlkes Mallows Score
+9. Homogeneity Score 
+10. Normalized Mutual Info Score
+11. Contingency Matrix
 
 
 Attibutes:
@@ -72,22 +91,24 @@ Attibutes:
 -y: flag if cell/mutations in tree2 start from zero (usually it starts from 1)
 -o: output path (optional)
 -r: typr to convert to (required)
+-l: Algorithm to be used for converting(required)
+-s: matrix for the tree structure
 
 Commands:- 
 
 1. Comparing Phylogentic with Clonal by converting to Clonal:-
-python compare.py -t 1 -u 2 -a ./inputs/dataset2_sifit.newick -b ./inputs/dataset2_siclonefit.txt -m 1 -y -r 2
+python compare.py -t 1 -u 2 -a ./inputs/dataset2_sifit.newick -b ./inputs/dataset2_siclonefit.txt -m 1 -y -r 2  -l 2 -s ./inputs/dataset2.txt
 
 2. Comparing Phylogentic with Mutational by converting to Phylogenetic:-
-python compare.py -t 1 -u 3 -a ./inputs/dataset2_sifit.newick -b ./inputs/dataset2_scite.newick -m 2 -r 1
+python compare.py -t 1 -u 3 -a ./inputs/dataset2_sifit.newick -b ./inputs/dataset2_scite.newick -m 2 -r 1 -l 2 -s ./inputs/dataset2.txt
 
 3. Comparing Phylogentic with Mutational by converting to Mutational:-
-python compare.py -t 1 -u 3 -a ./inputs/dataset2_sifit.newick -b ./inputs/dataset2_scite.newick -m 3 -r 3
+python compare.py -t 1 -u 3 -a ./inputs/dataset2_sifit.newick -b ./inputs/dataset2_scite.newick -m 3 -r 3 -l 2 -s ./inputs/dataset2.txt
 
 4. Comparing Mutational with Clonal by converting to Clonal:-
-python compare.py -t 3 -u 1 -a ./inputs/dataset2_sifit.newick -b ./inputs/dataset2_OncoNEM.txt -m 2 -r 2
+python compare.py -t 3 -u 1 -a ./inputs/dataset2_sifit.newick -b ./inputs/dataset2_OncoNEM.txt -m 2 -r 2 -l 2 -s ./inputs/dataset2.txt
 
 5. Comparing Mutational with Clonal by converting to Mutational:-
-python compare.py -t 3 -u 1 -a ./inputs/dataset2_sifit.newick -b ./inputs/dataset2_OncoNEM.txt -m 3 -r 3
+python compare.py -t 3 -u 1 -a ./inputs/dataset2_sifit.newick -b ./inputs/dataset2_OncoNEM.txt -m 3 -r 3 -l 2 -s ./inputs/dataset2.txt
 
 

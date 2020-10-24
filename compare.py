@@ -183,7 +183,7 @@ class compare_tree:
         print("Tree1 pairwise shortest-path cell distances:- "+str(obj1.sum))
         print("Tree2 pairwise shortest-path cell distances:- "+str(obj2.sum))
         print("Overall pairwise cell shortest-path distances:- "+ str(abs(obj1.sum-obj2.sum)))
-        print("Normalized pairwise cell shortest-path distances scorez:- "+str((2*abs(obj1.sum-obj2.sum))/(obj1.leafs*(obj1.leafs-1))))
+        print("Normalized pairwise cell shortest-path distances scores:- "+str((2*abs(obj1.sum-obj2.sum))/(obj1.leafs*(obj1.leafs-1))))
     
     
     '''
@@ -213,28 +213,25 @@ class compare_tree:
         obj1.create_cluster()
         obj2.create_cluster()
         #print(obj1.clus_label,obj2.clus_label)
-        print("Total Leafs are "+str(obj1.leafs))
         if m==2:
             print("Adjusted Rand Score :-"+ str(adjusted_rand_score(obj1.clus_label,obj2.clus_label)))
         elif m==3:
             print("Adjusted Mutual Info Score :-"+ str(adjusted_mutual_info_score(obj1.clus_label,obj2.clus_label)))
         elif m==4:
-            print("Adjusted Rand Score :-"+ str(adjusted_rand_score(obj1.clus_label,obj2.clus_label)))
-        elif m==5:
             print("V Measure Score :-"+ str(v_measure_score(obj1.clus_label,obj2.clus_label)))
+        elif m==5:
+            print("Calinski Harabasz Score :-"+ str(calinski_harabasz_score([[i] for i in range(0,obj1.leafs)],obj1.clus_label) - calinski_harabasz_score([[i] for i in range(0,self.obj1.leafs)],obj2.clus_label)))
         elif m==6:
-            print("Calinski Harabasz Score :-"+ str(calinski_harabasz_score([[i] for i in range(0,obj1.leafs)],obj1.clus_label))+" , "+str(calinski_harabasz_score([[i] for i in range(0,self.obj1.leafs)],obj2.clus_label)))
+             print("Davies Bouldin Score :-"+ str(davies_bouldin_score([[i] for i in range(0,obj1.leafs)],obj1.clus_label) - davies_bouldin_score([[i] for i in range(0,self.obj1.leafs)],obj2.clus_label)))
         elif m==7:
-             print("Davies Bouldin Score :-"+ str(davies_bouldin_score([[i] for i in range(0,obj1.leafs)],obj1.clus_label))+" , "+str(davies_bouldin_score([[i] for i in range(0,self.obj1.leafs)],obj2.clus_label)))
-        elif m==8:
             print("Completeness Score :-"+ str(completeness_score(obj1.clus_label,obj2.clus_label)))
-        elif m==9:
+        elif m==8:
             print("Fowlkes Mallows Score :-"+ str(fowlkes_mallows_score(obj1.clus_label,obj2.clus_label)))
-        elif m==10:
+        elif m==9:
             print("Homogeneity Score :-"+ str(homogeneity_score(obj1.clus_label,obj2.clus_label)))
-        elif m==11:
+        elif m==10:
             print("Normalized Mutual Info Score :-"+ str(normalized_mutual_info_score(obj1.clus_label,obj2.clus_label)))
-        elif m==12:
+        elif m==11:
             print("Contingency Matrix :- \n"+ str(contingency_matrix(obj1.clus_label,obj2.clus_label)))
         
     def compare(self):
@@ -361,7 +358,7 @@ if r==1:
         print("This conversion is not possible")
         sys.exit(2)
     elif ch1==3:
-        dot=convertor.muta_tree(content1,1,z1,gv1,1,path_matrix)
+        dot=convertor.muta_tree(content1,1,z1,gv1,1,path_matrix,path_output)
         dot.render(filename="Converted_Tree",directory=path_output)
         content1,label1=dot_to_newick(dot,save=False)
         z1=False
@@ -372,7 +369,7 @@ if r==1:
         print("This conversion is not possible")
         sys.exit(2)
     elif ch2==3:
-        dot=convertor.muta_tree(content2,1,z2,gv2,1,path_matrix)
+        dot=convertor.muta_tree(content2,1,z2,gv2,1,path_matrix,path_output)
         dot.render(filename="Converted_Tree",directory=path_output)
         content2,label2=dot_to_newick(dot,save=False)
         z2=False
@@ -381,13 +378,13 @@ if r==1:
         content2,label2=dot_to_newick(content2)
 elif r==2:
     if ch1==1:
-        dot=convertor.phylo_tree(content1,2,z1,gv1,a,1,path_matrix)
+        dot=convertor.phylo_tree(content1,2,z1,gv1,a,1,path_matrix,path_output)
         dot.render(filename="Converted_Tree",directory=path_output)
         content1,label1=dot_to_newick(dot,save=False)
         z1=False
         gv1=False
     elif ch1==3:
-        dot=convertor.muta_tree(content1,2,z1,gv1,a,1,path_matrix)
+        dot=convertor.muta_tree(content1,2,z1,gv1,a,1,path_matrix,path_output)
         dot.render(filename="Converted_Tree",directory=path_output)
         content1,label1=dot_to_newick(dot,save=False)
         z1=False
@@ -398,13 +395,13 @@ elif r==2:
         dot=graph_to_dot(content1)
         content1,label1=dot_to_newick(dot)
     if ch2==1:
-        dot=convertor.phlyo_tree(content2,2,z2,gv2,a,1,path_matrix)
+        dot=convertor.phylo_tree(content2,2,z2,gv2,a,1,path_matrix,path_output)
         dot.render(filename="Converted_Tree",directory=path_output)
         content2,label2=dot_to_newick(dot,save=False)
         z2=False
         gv2=False
     elif ch2==3:
-        dot=convertor.muta_tree(content2,2,z2,gv2,a,1,path_matrix)
+        dot=convertor.muta_tree(content2,2,z2,gv2,a,1,path_matrix,path_output)
         dot.render(filename="Converted_Tree",directory=path_output)
         content2,label2=dot_to_newick(dot,save=False)
         z2=False
@@ -416,13 +413,13 @@ elif r==2:
         content2,label2=dot_to_newick(dot)
 elif r==3:
     if ch1==1:
-        dot=convertor.phylo_tree(content1,3,z1,gv1,1,path_matrix)
+        dot=convertor.phylo_tree(content1,3,z1,gv1,1,path_matrix,path_output)
         dot.render(filename="Converted_Tree",directory=path_output)
         content1,label1=dot_to_newick(dot,save=False)
         z1=False
         gv1=False
     elif ch1==2:
-        dot=convertor.clonal_tree(content1,3,z1,gv1,gr1,1,path_matrix)
+        dot=convertor.clonal_tree(content1,3,z1,gv1,gr1,1,path_matrix,path_output)
         dot.render(filename="Converted_Tree",directory=path_output)
         content1,label1=dot_to_newick(dot,save=False)
         z1=False
@@ -430,13 +427,13 @@ elif r==3:
     elif gv1==True:
         content1,label1=dot_to_newick(content1)
     if ch2==1:
-        dot=convertor.phylo_tree(content2,3,z2,gv2,1,path_matrix)
+        dot=convertor.phylo_tree(content2,3,z2,gv2,1,path_matrix,path_output)
         dot.render(filename="Converted_Tree",directory=path_output)
         content2,label2=dot_to_newick(dot,save=False)
         z2=False
         gv2=False
     elif ch2==2:
-        dot=convertor.clonal_tree(content2,3,z2,gv2,gr2,1,path_matrix)
+        dot=convertor.clonal_tree(content2,3,z2,gv2,gr2,1,path_matrix,path_output)
         dot.render(filename="Converted_Tree",directory=path_output)
         content2,label2=dot_to_newick(dot,save=False)
         z2=False
@@ -446,7 +443,7 @@ elif r==3:
 else:
     print("Wrong Tree Choice inputted.")
     sys.exit(2)
-    
+#print(content1,content2)
 tree1=Phylo.read(io.StringIO(content1),"newick")
 Phylo.draw(tree1,do_show=False)
 plt.savefig(path_output+'Original_tree1.png')

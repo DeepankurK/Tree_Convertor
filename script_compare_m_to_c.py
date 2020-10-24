@@ -1,0 +1,53 @@
+import os
+for p in range(1,11):
+    file= open(r"/home/deepank/Downloads/Prof_Hamim/Convertor_project/Code/test_Data/10_clones/dataset"+str(p)+"/noisy_genotype_dataset"+str(p)+".txt","r")
+    content=file.readlines()
+    for j,i in enumerate(content):
+        a=i.split(" ")
+        del a[0]
+        for k in range(0,len(a)):
+            if a[k]=='2':
+                a[k]='1'
+        content[j]=" ".join(a)
+    file.close()
+    file=open("/home/deepank/Downloads/Prof_Hamim/Convertor_project/Code/test_Data/10_clones/dataset"+str(p)+"/dataset"+str(p)+".txt",'w')
+    file.write("".join(content))
+    file.close()
+    file=open("/home/deepank/Downloads/Prof_Hamim/Convertor_project/Code/test_Data/10_clones/dataset"+str(p)+"/Orig_tree_dataset"+str(p)+".txt",'r')
+    content=file.readlines()
+    file.close()
+    #if len(content)>1:
+     #   content=content[-1]
+    #print(content[1],len(content))
+    
+    file=open("/home/deepank/Downloads/Prof_Hamim/Convertor_project/Code/test_Data/10_clones/dataset"+str(p)+"/orig"+str(p)+".txt",'w')
+    file.write(content[1])
+    file.close()
+    for j in range(1,7):
+        os.system("echo algo "+str(j)+" >> result_2"+str(p)+".txt")
+        for k in range(1,12):
+            os.system("python compare.py -t 2 -u 3 -a /home/deepank/Downloads/Prof_Hamim/Convertor_project/Code/test_Data/10_clones/dataset"+str(p)+"/orig"+str(p)+".txt -b /home/deepank/Downloads/Prof_Hamim/Convertor_project/Code/test_Data/10_clones/dataset"+str(p)+"/SCITE_rslts/SCITE_noisy_genotype_dataset"+str(p)+"_ml0.gv -m "+str(k)+" -x -s /home/deepank/Downloads/Prof_Hamim/Convertor_project/Code/test_Data/10_clones/dataset"+str(p)+"/dataset"+str(p)+".txt -r 2 -l "+str(j)+" -o  /home/deepank/Downloads/Prof_Hamim/Convertor_project/Code/results_m_to_c/"+str(p)+"_"+str(j)+"_"+str(k)+" >> result_2"+str(p)+".txt")
+            print(p,j,k)
+
+
+import numpy as np
+ls=np.zeros((10,18))
+for p in range(1,11):
+    file=open("/home/deepank/Downloads/Prof_Hamim/Convertor_project/Code/results_m_to_c/result_2"+str(p)+".txt",'r')
+    content=file.readlines()
+    k=-1
+    for i in content:
+        if 'algo' in i:k+=1
+        if 'core' in i:
+            if 'pairwise' in i:
+                ls[p-1][3*k]=float(i.split('-')[2].strip())
+            elif 'V Measure' in i:
+                ls[p-1][3*k+1]=float(i.split('-')[1].strip())
+            elif 'Mallows' in i:
+                ls[p-1][3*k+2]=float(i.split('-')[1].strip())
+    file.close()
+print(ls)
+import pandas as pd
+df=pd.DataFrame(ls)
+print(df)    
+df.to_csv('result_m_to_c.txt',index=False,header=False)

@@ -102,8 +102,7 @@ class Mut_to_Clonal:
         elif self.a==3: self.labels=cluster.birch(distmat,self.cell)
         elif self.a==4: self.labels=cluster.kmeans(distmat,self.cell)
         elif self.a==5: self.labels=cluster.kmediods(distmat,self.cell)
-        elif self.a==6: self.labels=cluster.optics(distmat)
-        elif self.a==7: self.labels=cluster.spectral(distmat,self.cell)   
+        elif self.a==6: self.labels=cluster.spectral(distmat,self.cell)   
         for i in range(len(self.keys)):
             self.mut_map[self.keys[i]]=[self.mut_map[self.keys[i]],self.labels[i]]
     

@@ -270,8 +270,7 @@ class Phylo_to_Clonal:
         elif self.a==3: self.labels=cluster.birch(distmat,self.cell)
         elif self.a==4: self.labels=cluster.kmeans(distmat,self.cell)
         elif self.a==5: self.labels=cluster.kmediods(distmat,self.cell)
-        elif self.a==6: self.labels=cluster.optics(distmat)
-        elif self.a==7: self.labels=cluster.spectral(distmat,self.cell) 
+        elif self.a==6: self.labels=cluster.spectral(distmat,self.cell) 
         #print(self.labels)
         
     def create_cell_labels(self):
@@ -299,7 +298,8 @@ class Phylo_to_Clonal:
                         temp=self.allclades[j]
                     else:
                         temp=self.tree.common_ancestor(self.allclades[j],temp)
-                    #print(temp,i,self.tree.get_path(temp))
+                        #print(self.allclades[j],self.tree.get_path(self.allclades[j]))
+                    #print(temp.branch_length,i,self.tree.get_path(temp))
             self.dic_num[i]=temp
             #print(self.dic_num)
             for j  in self.tree.get_path(temp):
@@ -308,18 +308,28 @@ class Phylo_to_Clonal:
                 else:
                     self.root_num[j]+=1
         #print(self.root_num)
+        #print(self.dic_num)
         for i in list(self.dic_num.items()):
             #print(i[0],temp)
             a=self.tree.get_path(i[1])
             a.reverse()
+            #print(self.oneclade,len(a))
+            if a!=[]:
+                temp=a[0]
+            else:
+                temp=self.oneclade
+            #print(a,temp.branch_length)
             for j in a:
+                #print(self.root_num[j])
                 if self.root_num[j]!=1:
                     temp=j
                     break
+           # print(temp.branch_length)
             self.dic_num[i[0]]=temp
             #print(i[0],temp)
-            #print(self.tree.get_path(j))
-        #print(self.comm)
+            #print(self.tree.get_path(temp),i[0])
+        #print(":hi",self.dic_num)
+        #print(":hi",self.root_num)
     def check(self,ls):
         for j,i in enumerate(ls):
             ls[j]=re.sub('\D', '',str(i))
@@ -337,14 +347,18 @@ class Phylo_to_Clonal:
         self.c=self.c+1
     
     def assign(self,node,prev,clus):
+        #print(self.tree.get_path(node))
         for i in self.tree.get_path(node):
-            if i not in self.root_dic.keys():
-                self.root_dic[i]=[self.c,prev]
-                self.dot.node(str(self.c),' ')
-                self.c=self.c+1
-                self.dot.edge(str(self.root_dic[i][1]),str(self.root_dic[i][0]))
-            prev=self.root_dic[i][0]
-        self.node(clus,self.root_dic[node][0])
+            if self.root_num[i]!=1 and i in self.dic_num.values():
+                if i not in self.root_dic.keys() :
+                    self.root_dic[i]=[self.c,prev]
+                    self.dot.node(str(self.c),' ')
+                    self.c=self.c+1
+                    self.dot.edge(str(self.root_dic[i][1]),str(self.root_dic[i][0]))
+                prev=self.root_dic[i][0]
+        if node not in self.root_dic.keys():
+            self.node(clus,0)
+        else:self.node(clus,self.root_dic[node][0])
             
     def tree_to_dot(self,root,prev_ele):
         #print(root,flag)
@@ -354,8 +368,15 @@ class Phylo_to_Clonal:
                     self.node(i,prev_ele)
                 #print(self.cell_labels[i])
         if len(root.clades)==0:return
+        ls={}
         for i in list(self.dic_num.items()):
-            self.assign(i[1],0,i[0])
+            ls[i[0]]=len(self.tree.get_path(i[1]))
+        #print(ls)
+        ls=sorted(ls.items(), key = lambda kv:(int(kv[1]), int(kv[0])))
+        #print(ls)
+        #print("don",self.dic_num)
+        for i in ls:
+            self.assign(self.dic_num[i[0]],0,i[0])
                 
     def convert(self):
         distmat=self.dist()

@@ -10,7 +10,7 @@ from sklearn.cluster import SpectralClustering
 def affinity(distmat):
     labels=[]
     cluster = AffinityPropagation().fit(distmat)
-    print(cluster.labels_)
+    #print(cluster.labels_)
     #avg_score = metrics.silhouette_score(distmat, cluster.labels_)
     labels=cluster.labels_
     if -1 in labels:
@@ -28,7 +28,7 @@ def agglo(distmat,k):
         if -1 in cluster.labels_:
             continue
         avg_score = metrics.silhouette_score(distmat, cluster.labels_)
-        if max_score<avg_score:
+        if max_score<=avg_score:
             max_score=avg_score
             labels=cluster.labels_
     if -1 in labels:
@@ -44,7 +44,7 @@ def birch(distmat,k):
         if -1 in cluster.labels_:
             continue
         avg_score = metrics.silhouette_score(distmat, cluster.labels_)
-        if max_score<avg_score:
+        if max_score<=avg_score:
             max_score=avg_score
             labels=cluster.labels_
     if -1 in labels:
@@ -61,7 +61,7 @@ def kmeans(distmat,k):
         if -1 in cluster.labels_:
             continue
         avg_score = metrics.silhouette_score(distmat, cluster.labels_)
-        if max_score<avg_score:
+        if max_score<=avg_score:
             max_score=avg_score
             labels=cluster.labels_
     if -1 in labels:
@@ -77,20 +77,9 @@ def kmediods(distmat,k):
         if -1 in cluster.labels_:
             continue
         avg_score = metrics.silhouette_score(distmat, cluster.labels_)
-        if max_score<avg_score:
+        if max_score<=avg_score:
             max_score=avg_score
             labels=cluster.labels_
-    if -1 in labels:
-        print("Wrong Clustering selected")
-        exit()
-    return labels
-
-
-def optics(distmat):
-    labels=[]
-    cluster = OPTICS(min_samples=2).fit(distmat)
-    #print(cluster.labels_)
-    labels=cluster.labels_
     if -1 in labels:
         print("Wrong Clustering selected")
         exit()
@@ -104,7 +93,7 @@ def spectral(distmat,k):
         if -1 in cluster.labels_:
             continue
         avg_score = metrics.silhouette_score(distmat, cluster.labels_)
-        if max_score<avg_score:
+        if max_score<=avg_score:
             max_score=avg_score
             labels=cluster.labels_
     if -1 in labels:
