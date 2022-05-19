@@ -1,0 +1,17 @@
+At mcmc repetition 1/4, step 0: best tree score -1.79769e+308 and best beta 0.4 and best overall score -1.79769e+308
+At mcmc repetition 1/4, step 100000: best tree score -1439.64 and best beta 0.174702 and best overall score -1441
+At mcmc repetition 2/4, step 0: best tree score -1431.75 and best beta 0.170951 and best overall score -1433.23
+At mcmc repetition 2/4, step 100000: best tree score -1431.75 and best beta 0.170951 and best overall score -1433.23
+At mcmc repetition 3/4, step 0: best tree score -1431.75 and best beta 0.170951 and best overall score -1433.23
+At mcmc repetition 3/4, step 100000: best tree score -1431.75 and best beta 0.170951 and best overall score -1433.23
+At mcmc repetition 4/4, step 0: best tree score -1431.75 and best beta 0.170951 and best overall score -1433.23
+At mcmc repetition 4/4, step 100000: best tree score -1431.75 and best beta 0.170951 and best overall score -1433.23
+best log score for tree:	-1431.7506100586106
+#optimal steps after burn-in:	16
+total #steps after burn-in:	600000
+%optimal steps after burn-in:	2.6666666666666667e-05
+best value for beta:	0.17095087067047943
+best log score for (T, beta):	-1433.2315597767333
+samples from posterior written to: /home/hz22/SiCloneFit/simData/noDoublet/100_cells/50_sites/10_clones/dataset1/SCITE_rslts/SCITE_noisy_genotype_dataset1.samples
+1 opt trees 
+Time elapsed: 106450 ms

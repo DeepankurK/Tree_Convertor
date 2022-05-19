@@ -1,0 +1,2 @@
+converged: true
+lower_bound: -611.3081070755649

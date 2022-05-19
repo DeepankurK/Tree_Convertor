@@ -1,0 +1,5 @@
+Exception in thread "main" java.lang.RuntimeException: Trees must have identical leaf sets
+	at edu.rice.cs.bioinfo.programs.phylonet.algos.SymmetricDifference.computeRootedDifference(SymmetricDifference.java:142)
+	at edu.rice.cs.bioinfo.programs.phylonet.algos.SymmetricDifference.computeDifference(SymmetricDifference.java:55)
+	at SiFit.metric.CompareTrees.calcSymmetricDist(CompareTrees.java:37)
+	at SiFit.RunSiFit.main(RunSiFit.java:197)

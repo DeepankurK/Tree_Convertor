@@ -1,0 +1,224 @@
+// Clonal Tree
+digraph {
+	0 [label=N]
+	1 [label=" "]
+	0 -> 1
+	2 [label="C:0"]
+	1 -> 2
+	3 [label=Cell_1]
+	2 -> 3
+	4 [label=Cell_12]
+	2 -> 4
+	5 [label=Cell_32]
+	2 -> 5
+	6 [label=Cell_37]
+	2 -> 6
+	7 [label=Cell_4]
+	2 -> 7
+	8 [label=Cell_41]
+	2 -> 8
+	9 [label=Cell_45]
+	2 -> 9
+	10 [label=Cell_48]
+	2 -> 10
+	11 [label=Cell_50]
+	2 -> 11
+	12 [label=Cell_56]
+	2 -> 12
+	13 [label=Cell_67]
+	2 -> 13
+	14 [label=Cell_70]
+	2 -> 14
+	15 [label=Cell_71]
+	2 -> 15
+	16 [label=Cell_77]
+	2 -> 16
+	17 [label=Cell_81]
+	2 -> 17
+	18 [label=Cell_85]
+	2 -> 18
+	19 [label=Cell_9]
+	2 -> 19
+	20 [label=Cell_91]
+	2 -> 20
+	21 [label=" "]
+	0 -> 21
+	22 [label="C:1"]
+	21 -> 22
+	23 [label=Cell_100]
+	22 -> 23
+	24 [label=Cell_11]
+	22 -> 24
+	25 [label=Cell_13]
+	22 -> 25
+	26 [label=Cell_2]
+	22 -> 26
+	27 [label=Cell_22]
+	22 -> 27
+	28 [label=Cell_23]
+	22 -> 28
+	29 [label=Cell_29]
+	22 -> 29
+	30 [label=Cell_3]
+	22 -> 30
+	31 [label=Cell_30]
+	22 -> 31
+	32 [label=Cell_33]
+	22 -> 32
+	33 [label=Cell_39]
+	22 -> 33
+	34 [label=Cell_43]
+	22 -> 34
+	35 [label=Cell_46]
+	22 -> 35
+	36 [label=Cell_49]
+	22 -> 36
+	37 [label=Cell_5]
+	22 -> 37
+	38 [label=Cell_53]
+	22 -> 38
+	39 [label=Cell_54]
+	22 -> 39
+	40 [label=Cell_55]
+	22 -> 40
+	41 [label=Cell_58]
+	22 -> 41
+	42 [label=Cell_6]
+	22 -> 42
+	43 [label=Cell_60]
+	22 -> 43
+	44 [label=Cell_61]
+	22 -> 44
+	45 [label=Cell_63]
+	22 -> 45
+	46 [label=Cell_69]
+	22 -> 46
+	47 [label=Cell_7]
+	22 -> 47
+	48 [label=Cell_79]
+	22 -> 48
+	49 [label=Cell_8]
+	22 -> 49
+	50 [label=Cell_82]
+	22 -> 50
+	51 [label=Cell_86]
+	22 -> 51
+	52 [label=Cell_87]
+	22 -> 52
+	53 [label=Cell_93]
+	22 -> 53
+	54 [label="C:2"]
+	1 -> 54
+	55 [label=Cell_14]
+	54 -> 55
+	56 [label=Cell_19]
+	54 -> 56
+	57 [label=Cell_21]
+	54 -> 57
+	58 [label=Cell_31]
+	54 -> 58
+	59 [label=Cell_34]
+	54 -> 59
+	60 [label=Cell_35]
+	54 -> 60
+	61 [label=Cell_36]
+	54 -> 61
+	62 [label=Cell_40]
+	54 -> 62
+	63 [label=Cell_57]
+	54 -> 63
+	64 [label=Cell_64]
+	54 -> 64
+	65 [label=Cell_68]
+	54 -> 65
+	66 [label=Cell_73]
+	54 -> 66
+	67 [label=Cell_75]
+	54 -> 67
+	68 [label=Cell_83]
+	54 -> 68
+	69 [label=Cell_84]
+	54 -> 69
+	70 [label=Cell_88]
+	54 -> 70
+	71 [label=Cell_90]
+	54 -> 71
+	72 [label=Cell_96]
+	54 -> 72
+	73 [label=Cell_97]
+	54 -> 73
+	74 [label=" "]
+	21 -> 74
+	75 [label="C:3"]
+	74 -> 75
+	76 [label=Cell_17]
+	75 -> 76
+	77 [label=Cell_20]
+	75 -> 77
+	78 [label=Cell_25]
+	75 -> 78
+	79 [label=Cell_42]
+	75 -> 79
+	80 [label=Cell_52]
+	75 -> 80
+	81 [label=Cell_65]
+	75 -> 81
+	82 [label=Cell_76]
+	75 -> 82
+	83 [label=Cell_89]
+	75 -> 83
+	84 [label=Cell_98]
+	75 -> 84
+	85 [label=" "]
+	74 -> 85
+	86 [label="C:4"]
+	85 -> 86
+	87 [label=Cell_10]
+	86 -> 87
+	88 [label=Cell_15]
+	86 -> 88
+	89 [label=Cell_16]
+	86 -> 89
+	90 [label=Cell_24]
+	86 -> 90
+	91 [label=Cell_27]
+	86 -> 91
+	92 [label=Cell_28]
+	86 -> 92
+	93 [label=Cell_38]
+	86 -> 93
+	94 [label=Cell_44]
+	86 -> 94
+	95 [label=Cell_47]
+	86 -> 95
+	96 [label=Cell_59]
+	86 -> 96
+	97 [label=Cell_66]
+	86 -> 97
+	98 [label=Cell_72]
+	86 -> 98
+	99 [label=Cell_78]
+	86 -> 99
+	100 [label=Cell_80]
+	86 -> 100
+	101 [label=Cell_94]
+	86 -> 101
+	102 [label=Cell_99]
+	86 -> 102
+	103 [label="C:5"]
+	85 -> 103
+	104 [label=Cell_18]
+	103 -> 104
+	105 [label=Cell_26]
+	103 -> 105
+	106 [label=Cell_51]
+	103 -> 106
+	107 [label=Cell_62]
+	103 -> 107
+	108 [label=Cell_74]
+	103 -> 108
+	109 [label=Cell_92]
+	103 -> 109
+	110 [label=Cell_95]
+	103 -> 110
+}

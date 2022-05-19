@@ -1,0 +1,49 @@
+At mcmc repetition 1/4, step 0: best tree score -1.79769e+308 and best beta 0.4 and best overall score -1.79769e+308
+At mcmc repetition 1/4, step 100000: best tree score -1459.48 and best beta 0.149125 and best overall score -1461.75
+At mcmc repetition 1/4, step 200000: best tree score -1458.78 and best beta 0.151203 and best overall score -1460.97
+At mcmc repetition 1/4, step 300000: best tree score -1458.78 and best beta 0.151203 and best overall score -1460.97
+At mcmc repetition 1/4, step 400000: best tree score -1458.78 and best beta 0.151203 and best overall score -1460.97
+At mcmc repetition 1/4, step 500000: best tree score -1458.78 and best beta 0.151203 and best overall score -1460.97
+At mcmc repetition 1/4, step 600000: best tree score -1453.11 and best beta 0.141533 and best overall score -1455.7
+At mcmc repetition 1/4, step 700000: best tree score -1453.11 and best beta 0.141533 and best overall score -1455.7
+At mcmc repetition 1/4, step 800000: best tree score -1451.68 and best beta 0.146969 and best overall score -1454.03
+At mcmc repetition 1/4, step 900000: best tree score -1451.27 and best beta 0.147998 and best overall score -1453.58
+At mcmc repetition 2/4, step 0: best tree score -1451.27 and best beta 0.147998 and best overall score -1453.58
+At mcmc repetition 2/4, step 100000: best tree score -1451.27 and best beta 0.147998 and best overall score -1453.58
+At mcmc repetition 2/4, step 200000: best tree score -1451.07 and best beta 0.147533 and best overall score -1453.4
+At mcmc repetition 2/4, step 300000: best tree score -1451.07 and best beta 0.147533 and best overall score -1453.4
+At mcmc repetition 2/4, step 400000: best tree score -1451.07 and best beta 0.147533 and best overall score -1453.4
+At mcmc repetition 2/4, step 500000: best tree score -1451.07 and best beta 0.147533 and best overall score -1453.4
+At mcmc repetition 2/4, step 600000: best tree score -1451.07 and best beta 0.147533 and best overall score -1453.4
+At mcmc repetition 2/4, step 700000: best tree score -1451.07 and best beta 0.147533 and best overall score -1453.4
+At mcmc repetition 2/4, step 800000: best tree score -1451.07 and best beta 0.147533 and best overall score -1453.4
+At mcmc repetition 2/4, step 900000: best tree score -1451.07 and best beta 0.147533 and best overall score -1453.4
+At mcmc repetition 3/4, step 0: best tree score -1451.07 and best beta 0.147533 and best overall score -1453.4
+At mcmc repetition 3/4, step 100000: best tree score -1451.07 and best beta 0.147533 and best overall score -1453.4
+At mcmc repetition 3/4, step 200000: best tree score -1451.07 and best beta 0.147533 and best overall score -1453.4
+At mcmc repetition 3/4, step 300000: best tree score -1451.07 and best beta 0.147533 and best overall score -1453.4
+At mcmc repetition 3/4, step 400000: best tree score -1451.07 and best beta 0.147533 and best overall score -1453.4
+At mcmc repetition 3/4, step 500000: best tree score -1451.07 and best beta 0.147533 and best overall score -1453.4
+At mcmc repetition 3/4, step 600000: best tree score -1451.07 and best beta 0.147533 and best overall score -1453.4
+At mcmc repetition 3/4, step 700000: best tree score -1449.55 and best beta 0.143361 and best overall score -1452.05
+At mcmc repetition 3/4, step 800000: best tree score -1449.55 and best beta 0.143361 and best overall score -1452.05
+At mcmc repetition 3/4, step 900000: best tree score -1449.55 and best beta 0.143361 and best overall score -1452.05
+At mcmc repetition 4/4, step 0: best tree score -1449.55 and best beta 0.143361 and best overall score -1452.05
+At mcmc repetition 4/4, step 100000: best tree score -1449.55 and best beta 0.143361 and best overall score -1452.05
+At mcmc repetition 4/4, step 200000: best tree score -1449.55 and best beta 0.143361 and best overall score -1452.05
+At mcmc repetition 4/4, step 300000: best tree score -1449.41 and best beta 0.143886 and best overall score -1451.9
+At mcmc repetition 4/4, step 400000: best tree score -1449.41 and best beta 0.143886 and best overall score -1451.9
+At mcmc repetition 4/4, step 500000: best tree score -1449.41 and best beta 0.143886 and best overall score -1451.9
+At mcmc repetition 4/4, step 600000: best tree score -1449.41 and best beta 0.143886 and best overall score -1451.9
+At mcmc repetition 4/4, step 700000: best tree score -1449.41 and best beta 0.143886 and best overall score -1451.9
+At mcmc repetition 4/4, step 800000: best tree score -1449.41 and best beta 0.143886 and best overall score -1451.9
+At mcmc repetition 4/4, step 900000: best tree score -1449.41 and best beta 0.143886 and best overall score -1451.9
+best log score for tree:	-1449.4124947435068
+#optimal steps after burn-in:	4
+total #steps after burn-in:	3000000
+%optimal steps after burn-in:	1.3333333333333334e-06
+best value for beta:	0.14388626315756875
+best log score for (T, beta):	-1451.8955546558416
+samples from posterior written to: /home/hz22/SiCloneFit/simData/noDoublet/100_cells/50_sites/10_clones/dataset6/SCITE_rslts/SCITE_noisy_genotype_dataset6.samples
+1 opt trees 
+Time elapsed: 527740 ms
